@@ -1,0 +1,8 @@
+{
+  "name": "api",
+  "version": "0.0.1",
+  "description": "Angular 2 & Socket.IO: Event Driven UX",
+  "dependencies": {
+    "express": "^4.15.2"
+  }
+}
