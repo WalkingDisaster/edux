@@ -1,52 +1,97 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 
-import { ChatMessage } from './models/chat-message';
+import { UserDto } from './dtos/user-dto';
+import { ChatMessageDto } from './dtos/chat-message-dto';
+
+import { UserChangeEvent, UserChangeType } from './events/user-change-event';
+import { MessageEvent } from './events/message-event';
 
 import * as io from 'socket.io-client';
 
 @Injectable()
 export class ChatService {
   private socket: SocketIOClient.Socket;
+  private currentUser: string;
+
+  userSubject: Subject<UserChangeEvent>;
+  users: Set<string>;
+
+  messageSubject: Subject<MessageEvent>;
 
   constructor() {
+    this.users = new Set<string>();
+    this.userSubject = new Subject<UserChangeEvent>();
+    this.messageSubject = new Subject<MessageEvent>();
+
     this.initSocket();
   }
 
   private initSocket(): void {
-    this.socket = io('http://localhost:3000');
+    const socket = io('http://localhost:3000');
+    this.subscribeEvents(socket);
+    this.socket = socket;
   }
-  /*
-    public send(message: Message): void {
-      this.socket.emit('message', message);
+  private subscribeEvents(socket: SocketIOClient.Socket): void {
+    socket
+      .on('login', users => this.replaceUsers(users))
+      .on('user joined', user => this.addUser(user))
+      .on('user left', user => this.removeUser(user))
+      .on('new message', message => this.messageReceived(message))
+      .on('typing', user => this.userIsTyping(user))
+      .on('stop typing', user => this.userStoppedTyping(user));
+  }
+
+  private replaceUsers(data: any): void {
+    const currentUsers = Array.from(this.users);
+    for (let i = 0; i < currentUsers.length; i++) {
+      const currentUser = currentUsers[i];
+      this.removeUser(new UserDto(currentUser));
     }
-  */
-  public getMessageObserver(): Observable<ChatMessage> {
-    const observable = new Observable(observer => {
-      this.socket.on('new message', (data) => {
-        observer.next(new ChatMessage(data.username, data.message));
-      });
-      return () => {
-        this.socket.disconnect();
-      };
-    });
-    return observable;
+
+    for (const user of data.users) {
+      this.addUser(new UserDto(user));
+    }
+    console.log(this.users);
   }
 
-  public iAm(name: String): Observable<Array<string>> {
-    this.socket.emit('add user', name);
-    return new Observable(observer => {
-      this.socket.on('login', (data) => {
-        observer.next(data.users);
-      });
-    });
+  private addUser(userDto: UserDto): void {
+    if (this.users.has(userDto.userName)) {
+      return;
+    }
+    this.users.add(userDto.userName);
+    this.userSubject.next(new UserChangeEvent(userDto.userName, UserChangeType.Joined));
   }
 
-  public imOuttaHere() {
-    this.socket.emit('disconnect');
+  private removeUser(userDto: UserDto): void {
+    if (this.users.has(userDto.userName)) {
+      this.users.delete(userDto.userName);
+      this.userSubject.next(new UserChangeEvent(userDto.userName, UserChangeType.Left));
+    }
   }
 
-  public getFunk() {
-    return 'I am tha funk!';
+  private messageReceived(messageDto: ChatMessageDto): void {
+    this.messageSubject.next(new MessageEvent(messageDto.userName, messageDto.message));
+  }
+
+  private userIsTyping(user: UserDto): void {
+    this.userSubject.next(new UserChangeEvent(user.userName, UserChangeType.Typing));
+  }
+
+  private userStoppedTyping(user: UserDto): void {
+    this.userSubject.next(new UserChangeEvent(user.userName, UserChangeType.StoppedTyping));
+  }
+
+  public connectAs(userName: string): void {
+    this.socket.emit('add user', userName);
+  }
+
+  public disconnect(): void {
+    this.socket.disconnect();
+  }
+
+  public sendMessage(message: string): void {
+    this.socket.emit('new message', message);
   }
 }

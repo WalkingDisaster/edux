@@ -21,50 +21,50 @@ io.on('connection', function (socket) {
     socket.on('new message', function (data) {
         // we tell the client to execute 'new message'
         socket.broadcast.emit('new message', {
-            username: socket.username,
+            userName: socket.userName,
             message: data
         });
     });
 
     // when the client emits 'add user', this listens and executes
-    socket.on('add user', function (username) {
-        if (!users.has(username)) {
-            users.add(username);
+    socket.on('add user', function (userName) {
+        if (!users.has(userName)) {
+            users.add(userName);
+            console.log(`User ${userName} logged in.`)
         }
 
-        // we store the username in the socket session for this client
-        socket.username = username;
+        // we store the userName in the socket session for this client
+        socket.userName = userName;
         socket.emit('login', {
             users: Array.from(users)
         });
         // echo globally (all clients) that a person has connected
         socket.broadcast.emit('user joined', {
-            username: socket.username,
-            users: Array.from(users)
+            userName: socket.userName
         });
     });
 
     // when the client emits 'typing', we broadcast it to others
     socket.on('typing', function () {
         socket.broadcast.emit('typing', {
-            username: socket.username
+            userName: socket.userName
         });
     });
 
     // when the client emits 'stop typing', we broadcast it to others
     socket.on('stop typing', function () {
         socket.broadcast.emit('stop typing', {
-            username: socket.username
+            userName: socket.userName
         });
     });
 
     // when the user disconnects.. perform this
     socket.on('disconnect', function () {
-        users.delete(socket.username);
+        users.delete(socket.userName);
 
         // echo globally that this client has left
         socket.broadcast.emit('user left', {
-            username: socket.username
+            userName: socket.userName
         });
     });
 });

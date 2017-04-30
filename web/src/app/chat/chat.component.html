@@ -1,9 +1,13 @@
-<p>
-  {{funk}}
-</p>
-<ul>
-  <li *ngFor="let user of users">{{user}}</li>
-</ul>
-<ul>
-  <li *ngFor="let message of messages">{{message.sender}} - {{message.text}}</li>
-</ul>
+<div class="user-list">
+  <ul>
+    <li *ngFor="let user of chatUsers">{{user.userName}} <span [hidden]="!user.typing">(typing)</span></li>
+  </ul>
+</div>
+<div>
+  <ul>
+    <li *ngFor="let message of messages">{{message.sender}} - {{message.text}}</li>
+  </ul>
+</div>
+<div>
+
+</div>
