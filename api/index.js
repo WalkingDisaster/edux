@@ -14,11 +14,9 @@ app.use(express.static(__dirname + '/public'));
 
 // Chatroom
 
-var numUsers = 0;
+var users = new Set();
 
 io.on('connection', function (socket) {
-    var addedUser = false;
-
     // when the client emits 'new message', this listens and executes
     socket.on('new message', function (data) {
         // we tell the client to execute 'new message'
@@ -30,19 +28,19 @@ io.on('connection', function (socket) {
 
     // when the client emits 'add user', this listens and executes
     socket.on('add user', function (username) {
-        if (addedUser) return;
+        if (!users.has(username)) {
+            users.add(username);
+        }
 
         // we store the username in the socket session for this client
         socket.username = username;
-        ++numUsers;
-        addedUser = true;
         socket.emit('login', {
-            numUsers: numUsers
+            users: Array.from(users)
         });
         // echo globally (all clients) that a person has connected
         socket.broadcast.emit('user joined', {
             username: socket.username,
-            numUsers: numUsers
+            users: Array.from(users)
         });
     });
 
@@ -62,14 +60,11 @@ io.on('connection', function (socket) {
 
     // when the user disconnects.. perform this
     socket.on('disconnect', function () {
-        if (addedUser) {
-            --numUsers;
+        users.delete(socket.username);
 
-            // echo globally that this client has left
-            socket.broadcast.emit('user left', {
-                username: socket.username,
-                numUsers: numUsers
-            });
-        }
+        // echo globally that this client has left
+        socket.broadcast.emit('user left', {
+            username: socket.username
+        });
     });
 });

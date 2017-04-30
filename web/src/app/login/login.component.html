@@ -1,0 +1,10 @@
+<div class="container">
+  <h1>Who you be?</h1>
+  <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+    <div class="form-group">
+      <label for="name">User Name</label>
+      <input type="text" class="form-control" id="userName" required [(ngModel)]="userName" name="userName">
+    </div>
+    <button type="submit " class="btn btn-success" [disabled]="loginForm.isNotValid">Submit</button>
+  </form>
+</div>
