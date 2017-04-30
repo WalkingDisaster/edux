@@ -16,7 +16,7 @@ app.use(express.static(__dirname + '/public'));
 
 var users = new Set();
 
-io.on('connection', function (socket) {
+io.of('/chat').on('connection', function (socket) {
     // when the client emits 'new message', this listens and executes
     socket.on('new message', function (data) {
         // we tell the client to execute 'new message'

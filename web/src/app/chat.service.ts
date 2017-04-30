@@ -31,7 +31,7 @@ export class ChatService {
   }
 
   private initSocket(): void {
-    const socket = io('http://localhost:3000');
+    const socket = io('http://localhost:3000/chat');
     this.subscribeEvents(socket);
     this.socket = socket;
   }
