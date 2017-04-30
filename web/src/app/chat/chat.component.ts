@@ -18,10 +18,12 @@ import { ChatUser } from '../models/chat-user';
 })
 export class ChatComponent implements OnInit {
 
+  private timeoutId: number;
+
   messages: Array<ChatMessage> = new Array<ChatMessage>();
-  users: Set<string>; // delete
-  typingUsers: Set<string> = new Set<string>(); // delete
   chatUsers: Array<ChatUser> = new Array<ChatUser>();
+
+  message: string;
 
   constructor(
     private chatService: ChatService
@@ -38,7 +40,6 @@ export class ChatComponent implements OnInit {
       message => this.handleMessageError(message),
       () => this.noMoreMessages());
 
-    this.users = new Set(this.chatService.users); // delete
     this.chatUsers = Array.from(this.chatService.users, u => new ChatUser(u, false));
     this.chatService.connectAs(this.userService.getUserName());
   }
@@ -46,11 +47,9 @@ export class ChatComponent implements OnInit {
   private handleUserEvent(event: UserChangeEvent): void {
     switch (event.type) {
       case UserChangeType.Joined:
-        this.users.add(event.userName); // delete
         this.chatUsers.push(new ChatUser(event.userName, false));
         break;
       case UserChangeType.Left:
-        this.users.delete(event.userName); // delete
         const toRemove = this.chatUsers.find(u => u.userName === event.userName);
         const index = this.chatUsers.indexOf(toRemove);
         if (index > 0) {
@@ -58,18 +57,12 @@ export class ChatComponent implements OnInit {
         }
         break;
       case UserChangeType.Typing:
-        if (this.typingUsers.has(event.userName)) { // delete
-          this.typingUsers.delete(event.userName); // delete
-        } // delete
         const userWhoIsTyping = this.chatUsers.find(u => u.userName === event.userName);
         if (userWhoIsTyping) {
           userWhoIsTyping.typing = true;
         }
         break;
       case UserChangeType.StoppedTyping:
-        if (!this.typingUsers.has(event.userName)) { // delete
-          this.typingUsers.add(event.userName); // delete
-        } // delete
         const userWhoIsNotTyping = this.chatUsers.find(u => u.userName === event.userName);
         if (userWhoIsNotTyping) {
           userWhoIsNotTyping.typing = false;
@@ -79,8 +72,6 @@ export class ChatComponent implements OnInit {
   }
 
   private handleUserChangeError(error): void {
-    this.users.clear(); // delete
-    this.users.add('error'); // delete
     this.chatUsers = [new ChatUser('error', false)];
   }
   private noMoreUsers(): void {
@@ -95,5 +86,28 @@ export class ChatComponent implements OnInit {
   }
   private noMoreMessages(): void {
     console.log('Service ended message stream.');
+  }
+
+  public keyPressed(value: number): void {
+    if (value === 13) {
+      this.sendMessage();
+      return;
+    }
+    // logic to capture typing
+    if (this.timeoutId) {
+      window.clearTimeout(this.timeoutId);
+    }
+    this.timeoutId = window.setTimeout(() => {
+      this.chatService.stopTyping();
+    }, 500);
+    this.chatService.typing();
+  }
+
+  public sendMessage(): void {
+    if (!this.message || this.message.trim() === '') {
+      return;
+    }
+    this.chatService.sendMessage(this.message);
+    this.message = '';
   }
 }

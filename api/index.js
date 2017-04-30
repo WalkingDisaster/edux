@@ -24,6 +24,9 @@ io.on('connection', function (socket) {
             userName: socket.userName,
             message: data
         });
+        socket.broadcast.emit('stop typing', {
+            userName: socket.userName
+        });
     });
 
     // when the client emits 'add user', this listens and executes

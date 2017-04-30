@@ -12,6 +12,8 @@ import * as io from 'socket.io-client';
 
 @Injectable()
 export class ChatService {
+
+  private isTyping = false;
   private socket: SocketIOClient.Socket;
   private currentUser: string;
 
@@ -84,14 +86,34 @@ export class ChatService {
   }
 
   public connectAs(userName: string): void {
+    if (this.currentUser === userName) {
+      return;
+    }
+    this.currentUser = userName;
     this.socket.emit('add user', userName);
   }
 
   public disconnect(): void {
+    this.currentUser = null;
     this.socket.disconnect();
   }
 
   public sendMessage(message: string): void {
+    this.messageSubject.next(new MessageEvent(this.currentUser, message));
     this.socket.emit('new message', message);
+  }
+
+  public typing(): void {
+    if (!this.isTyping) {
+      this.isTyping = true;
+      this.socket.emit('typing');
+    }
+  }
+
+  public stopTyping(): void {
+    if (this.isTyping) {
+      this.isTyping = false;
+      this.socket.emit('stop typing');
+    }
   }
 }
