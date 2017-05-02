@@ -18,5 +18,6 @@ chatModule.init(io);
 
 accountsModule.userAdded.subscribe(user => console.log(`***via event: user "${user}" logged in`));
 accountsModule.userRemoved.subscribe(user => {
-    accountsModule.notify('One', `The user ${user} has logged out.`, logins);
+    //accountsModule.notifyAll(io, `The user ${user} has logged out.`, logins);
+    accountsModule.notifyOthers(io, user, `The user ${user} has logged out.`, logins);
 });

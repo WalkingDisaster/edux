@@ -77,3 +77,22 @@ exports.notify = function (userName, message, logins) {
         message: message
     });
 }
+
+exports.notifyAll = function (io, message, logins) {
+    io.sockets.emit('notify', {
+        message: message
+    });
+}
+
+exports.notifyOthers = function (io, userName, message, logins) {
+    if (!logins.has(userName)) {
+        io.sockets.emit('notify', {
+            message: message
+        });
+        return;
+    }
+    var socket = logins.get(userName).socket;
+    socket.broadcast('notify', {
+        message: message
+    });
+}
