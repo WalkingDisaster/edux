@@ -2,9 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
-import { ChatService } from '../chat.service';
-import { UserService } from '../user.service';
-import { UtilityService, Debouncable } from '../utility.service';
+import { ChatService } from './chat.service';
+import { UserService } from '../common/user.service';
+import { UtilityService, Debouncable } from '../common/utility.service';
 
 import { UserChangeEvent, UserChangeType } from '../events/user-change-event';
 

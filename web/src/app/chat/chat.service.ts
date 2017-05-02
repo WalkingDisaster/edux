@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
-import { UserDto } from './dtos/user-dto';
-import { ChatMessageDto } from './dtos/chat-message-dto';
+import { UserDto } from '../dtos/user-dto';
+import { ChatMessageDto } from '../dtos/chat-message-dto';
 
-import { UserChangeEvent, UserChangeType } from './events/user-change-event';
-import { MessageEvent } from './events/message-event';
+import { UserChangeEvent, UserChangeType } from '../events/user-change-event';
+import { MessageEvent } from '../events/message-event';
 
-import { SocketService } from './socket.service';
-import { UserService } from './user.service';
+import { SocketService } from '../common/socket.service';
+import { UserService } from '../common/user.service';
 
 import * as io from 'socket.io-client';
 

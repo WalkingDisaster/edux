@@ -1,5 +1,6 @@
 const accountsModule = require('./accounts');
 const chatModule = require('./chat');
+const reportsModule = require('./reports');
 
 // Setup basic express server
 var express = require('express');
@@ -21,3 +22,5 @@ accountsModule.userRemoved.subscribe(user => {
     //accountsModule.notifyAll(io, `The user ${user} has logged out.`, logins);
     accountsModule.notifyOthers(io, user, `The user ${user} has logged out.`, logins);
 });
+
+reportsModule.init(io);

@@ -15,10 +15,12 @@ import { HomeComponent } from './home/home.component';
 import { ChatComponent } from './chat/chat.component';
 import { LoginComponent } from './login/login.component';
 
-import { SocketService } from './socket.service';
-import { ChatService } from './chat.service';
-import { UserService } from './user.service';
-import { UtilityService } from './utility.service';
+import { SocketService } from './common/socket.service';
+import { ChatService } from './chat/chat.service';
+import { UserService } from './common/user.service';
+import { UtilityService } from './common/utility.service';
+import { NotificationService } from './notification/notification.service';
+import { NotificationComponent } from './notification/notification.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,8 @@ import { UtilityService } from './utility.service';
     PageNotFoundComponent,
     HomeComponent,
     ChatComponent,
-    LoginComponent
+    LoginComponent,
+    NotificationComponent
   ],
   imports: [
     ChatRoutingModule,

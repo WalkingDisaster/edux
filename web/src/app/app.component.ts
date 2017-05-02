@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { UserService } from './user.service';
+import { UserService } from './common/user.service';
 import { NotificationBarService, NotificationType } from 'angular2-notification-bar';
 
 @Component({

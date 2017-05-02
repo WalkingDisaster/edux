@@ -3,8 +3,8 @@ import { Subject } from 'rxjs/Subject';
 
 import { SocketService } from './socket.service';
 
-import { NotificationDto } from './dtos/notification-dto';
-import { Notification } from './models/notification';
+import { NotificationDto } from '../dtos/notification-dto';
+import { Notification } from '../models/notification';
 
 import * as io from 'socket.io-client';
 
