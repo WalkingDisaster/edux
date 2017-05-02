@@ -9,18 +9,19 @@ import { LoginRoutingModule } from './login/login-routing.module';
 
 import { AppComponent } from './app.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { HelloComponent } from './hello/hello.component';
+import { HomeComponent } from './home/home.component';
 import { ChatComponent } from './chat/chat.component';
+import { LoginComponent } from './login/login.component';
 
 import { ChatService } from './chat.service';
 import { UserService } from './user.service';
-import { LoginComponent } from './login/login.component';
+import { UtilityService } from './utility.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     PageNotFoundComponent,
-    HelloComponent,
+    HomeComponent,
     ChatComponent,
     LoginComponent
   ],
@@ -33,7 +34,8 @@ import { LoginComponent } from './login/login.component';
   ],
   providers: [
     ChatService,
-    UserService
+    UserService,
+    UtilityService
   ],
   bootstrap: [AppComponent]
 })

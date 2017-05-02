@@ -18,14 +18,16 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if (this.userService.userNameIsSet()) {
+    if (this.userService.isLoggedIn()) {
       this.userName = this.userService.getUserName();
     }
   }
 
-  public onSubmit() {
-    this.userService.setUserName(this.userName);
-    this.router.navigate([this.userService.redirectUrl]);
+  public onSubmit(): void {
+    this.userService.login(this.userName);
+    const redirectUrl = this.userService.redirectUrl;
+    this.userService.redirectUrl = '';
+    this.router.navigate([redirectUrl]);
   }
 
   public isNotValid(): boolean {

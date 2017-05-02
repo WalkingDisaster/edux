@@ -1,8 +1,11 @@
 <h1>
   {{title}}
 </h1>
+<div>{{userMessage}}</div>
 <nav>
   <a routerLink="/" routerLinkActive="active">Home</a>
   <a routerLink="/chat" routerLinkActive="active">Chat</a>
+  <span *ngIf="!loggedIn" class="link" (click)="login()">login</span>
+  <span *ngIf="loggedIn" class="link" (click)="logout()">logout</span>
 </nav>
 <router-outlet></router-outlet>

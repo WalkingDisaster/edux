@@ -8,11 +8,14 @@ import { ChatMessageDto } from './dtos/chat-message-dto';
 import { UserChangeEvent, UserChangeType } from './events/user-change-event';
 import { MessageEvent } from './events/message-event';
 
+import { UserService } from './user.service';
+
 import * as io from 'socket.io-client';
 
 @Injectable()
 export class ChatService {
 
+  private connected = false;
   private isTyping = false;
   private socket: SocketIOClient.Socket;
   private currentUser: string;
@@ -22,12 +25,13 @@ export class ChatService {
 
   messageSubject: Subject<MessageEvent>;
 
-  constructor() {
+  constructor(private userService: UserService) {
     this.users = new Set<string>();
     this.userSubject = new Subject<UserChangeEvent>();
     this.messageSubject = new Subject<MessageEvent>();
 
     this.initSocket();
+    this.userService.logoutSubject.subscribe(() => this.socket.disconnect());
   }
 
   private initSocket(): void {
@@ -42,7 +46,9 @@ export class ChatService {
       .on('user left', user => this.removeUser(user))
       .on('new message', message => this.messageReceived(message))
       .on('typing', user => this.userIsTyping(user))
-      .on('stop typing', user => this.userStoppedTyping(user));
+      .on('stop typing', user => this.userStoppedTyping(user))
+      .on('disconnect', () => this.onDisconnected())
+      .on('connect', () => this.onReconnected());
   }
 
   private replaceUsers(data: any): void {
@@ -85,17 +91,26 @@ export class ChatService {
     this.userSubject.next(new UserChangeEvent(user.userName, UserChangeType.StoppedTyping));
   }
 
-  public connectAs(userName: string): void {
-    if (this.currentUser === userName) {
-      return;
-    }
-    this.currentUser = userName;
-    this.socket.emit('add user', userName);
+  private onDisconnected(): void {
+    this.connected = false;
   }
 
-  public disconnect(): void {
-    this.currentUser = null;
-    this.socket.disconnect();
+  private onReconnected(): void {
+    this.connect();
+  }
+
+  private connect(): void {
+    if (!this.connected) {
+      this.socket.emit('add user', this.currentUser);
+      this.connected = true;
+    }
+  }
+
+  public connectAs(userName: string): void {
+    if (this.currentUser !== userName) {
+      this.currentUser = userName;
+    }
+    this.connect();
   }
 
   public sendMessage(message: string): void {
