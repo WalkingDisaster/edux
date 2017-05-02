@@ -3,6 +3,9 @@ import { Subject } from 'rxjs/Subject';
 
 import { SocketService } from './socket.service';
 
+import { NotificationDto } from './dtos/notification-dto';
+import { Notification } from './models/notification';
+
 import * as io from 'socket.io-client';
 
 @Injectable()
@@ -13,6 +16,7 @@ export class UserService {
   public redirectUrl: string;
   public loginSubject = new Subject<string>();
   public logoutSubject = new Subject<void>();
+  public notification = new Subject<Notification>();
 
   constructor(private socketService: SocketService) {
     this.initSocket(this.socketService.connect());
@@ -26,6 +30,16 @@ export class UserService {
   private subscribeEvents(socket: SocketIOClient.Socket): void {
     // login
     // logout
+    socket
+      .on('connect', () => {
+        if (this.isLoggedIn()) {
+          const userName = this.getUserName();
+          this.socket.emit('login', userName);
+        }
+      })
+      .on('notify', (data: NotificationDto) => {
+        this.notification.next(data);
+      });
   }
 
   public getUserName(): string {

@@ -13,8 +13,10 @@ server.listen(port, function () {
     console.log('Server listening at port %d', port);
 });
 
-accountsModule.init(io);
+var logins = accountsModule.init(io);
 chatModule.init(io);
 
 accountsModule.userAdded.subscribe(user => console.log(`***via event: user "${user}" logged in`));
-accountsModule.userRemoved.subscribe(user => console.log(`***via event: user "${user}" logged out`));
+accountsModule.userRemoved.subscribe(user => {
+    accountsModule.notify('One', `The user ${user} has logged out.`, logins);
+});

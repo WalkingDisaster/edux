@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { MessagesModule } from 'primeng/primeng';
 
 import { UserService } from './user.service';
 
@@ -19,6 +20,9 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.userService.loginSubject.subscribe(userName => this.onLoggedIn(userName));
     this.userService.logoutSubject.subscribe(() => this.onLoggedOut());
+    this.userService.notification.subscribe(data => {
+      alert(data.message);
+    }); // finish
     this.loggedIn = this.userService.isLoggedIn();
     if (this.loggedIn) { this.onLoggedIn(this.userService.getUserName()); } else { this.onLoggedOut(); }
   }
