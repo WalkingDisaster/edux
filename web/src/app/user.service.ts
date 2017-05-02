@@ -1,26 +1,46 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
+import { SocketService } from './socket.service';
+
+import * as io from 'socket.io-client';
+
 @Injectable()
 export class UserService {
   private static USER_NAME_KEY = 'fddd6b1d-c754-4778-bbf4-b03554c3c48e';
-  redirectUrl: string;
+  private socket: SocketIOClient.Socket;
+
+  public redirectUrl: string;
   public loginSubject = new Subject<string>();
   public logoutSubject = new Subject<void>();
 
-  constructor() { }
+  constructor(private socketService: SocketService) {
+    this.initSocket(this.socketService.connect());
+  }
+
+  private initSocket(socket: SocketIOClient.Socket): void {
+    this.subscribeEvents(socket);
+    this.socket = socket;
+  }
+
+  private subscribeEvents(socket: SocketIOClient.Socket): void {
+    // login
+    // logout
+  }
 
   public getUserName(): string {
-    return localStorage.getItem(UserService.USER_NAME_KEY)
+    return localStorage.getItem(UserService.USER_NAME_KEY);
   }
 
   public login(userName: string): void {
     localStorage.setItem(UserService.USER_NAME_KEY, userName);
+    this.socket.emit('login', userName);
     this.loginSubject.next(userName);
   }
 
   public logout(): void {
     localStorage.removeItem(UserService.USER_NAME_KEY);
+    this.socket.emit('logout');
     this.logoutSubject.next();
   }
 
