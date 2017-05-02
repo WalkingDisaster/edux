@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
+import { NotificationBarModule, NotificationBarService } from 'angular2-notification-bar';
+
 import { AppRoutingModule } from './app-routing.module';
 import { ChatRoutingModule } from './chat/chat-routing.module';
 import { LoginRoutingModule } from './login/login-routing.module';
@@ -31,13 +33,15 @@ import { UtilityService } from './utility.service';
     AppRoutingModule,
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    NotificationBarModule
   ],
   providers: [
     SocketService,
     ChatService,
     UserService,
-    UtilityService
+    UtilityService,
+    NotificationBarService
   ],
   bootstrap: [AppComponent]
 })

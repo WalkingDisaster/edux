@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MessagesModule } from 'primeng/primeng';
 
 import { UserService } from './user.service';
+import { NotificationBarService, NotificationType } from 'angular2-notification-bar';
 
 @Component({
   selector: 'app-root',
@@ -15,14 +15,18 @@ export class AppComponent implements OnInit {
   userMessage: string;
   loggedIn: boolean;
 
-  constructor(private userService: UserService, private router: Router) { }
+  constructor(
+    private notificationBarService: NotificationBarService
+    , private userService: UserService
+    , private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.userService.loginSubject.subscribe(userName => this.onLoggedIn(userName));
     this.userService.logoutSubject.subscribe(() => this.onLoggedOut());
     this.userService.notification.subscribe(data => {
-      alert(data.message);
-    }); // finish
+      this.notificationBarService.create({ message: data.message, type: NotificationType.Info });
+    });
     this.loggedIn = this.userService.isLoggedIn();
     if (this.loggedIn) { this.onLoggedIn(this.userService.getUserName()); } else { this.onLoggedOut(); }
   }

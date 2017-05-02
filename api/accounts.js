@@ -10,42 +10,59 @@ exports.init = function (io) {
     var logins = new Map();
 
     io.on('connection', function (socket) {
-        var handshake = socket.handshake;
-        var token = `${handshake.headers.cookie}-${handshake.address}`;
+        if (!socket.token) {
+            socket.token = `${socket.client.id}-${socket.handshake.address}`;
+            console.info(`Assigning token "${socket.token}" to this socket.`);
+        }
+        socket.emit('token acquired', socket.token);
 
-        socket.on('login', function (userName) {
-            var error = false;
+        socket
+            .on('login', function (data) {
+                var error = false;
 
-            if (logins.has(userName)) {
-                var expectedToken = logins.get(userName);
-                if (expectedToken !== token) {
-                    // error
-                    console.log(`User "${userName}" was already reserved by another socket. Expected token "${expectedToken}", but got "${token}"`)
-                    error = true;
+                var userName = data.userName;
+                var gotToken = data.token;
+
+                if (logins.has(userName)) {
+                    var expectedToken = logins.get(userName).token;
+                    if (expectedToken !== gotToken) {
+                        // error
+                        console.warn(`User "${userName}" was already reserved by another socket. Expected token "${expectedToken}", but got "${gotToken}"`)
+                        error = true;
+                    }
+                } else {
+                    console.info(`User "${userName}" got token "${socket.token}"`);
+                    logins.set(userName, {
+                        token: socket.token,
+                        socket: socket
+                    });
+                    socket.userName = userName;
                 }
-            } else {
-                logins.set(userName, {
-                    token: token,
-                    socket: socket
-                });
-                socket.userName = userName;
-            }
 
-            if (!error) {
-                // additional stuff
-                // confirm connection
-                userAdded.next(userName)
-            }
-        });
-        socket.on('logout', function () {
-            var userName = socket.userName;
-            if (logins.has(userName) && logins.get(userName).token === token) {
-                logins.delete(userName);
-                // additional stuff
-                // confirm disconnection
-                userRemoved.next(userName);
-            }
-        });
+                if (!error) {
+                    // additional stuff
+                    // confirm connection
+                    userAdded.next(userName)
+                }
+            })
+            .on('disconnect', function () {
+                var userName = socket.userName;
+                if (logins.has(userName)) {
+                    console.info(`User "${userName}" disconnected.`);
+                    logins.delete(userName);
+                    userRemoved.next(userName);
+                }
+            })
+            .on('logout', function () {
+                var userName = socket.userName;
+                if (logins.has(userName) && logins.get(userName).token === socket.token) {
+                    console.info(`Logging user "${userName}" out. Token "${socket.token}" no longer needed.`)
+                    logins.delete(userName);
+                    // additional stuff
+                    // confirm disconnection
+                    userRemoved.next(userName);
+                }
+            });
     });
     return logins;
 };

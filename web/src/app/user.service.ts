@@ -11,6 +11,7 @@ import * as io from 'socket.io-client';
 @Injectable()
 export class UserService {
   private static USER_NAME_KEY = 'fddd6b1d-c754-4778-bbf4-b03554c3c48e';
+  private static TOKEN = '477eb2ea-f191-4a9c-8116-11c40b5ab0dc';
   private socket: SocketIOClient.Socket;
 
   public redirectUrl: string;
@@ -31,10 +32,16 @@ export class UserService {
     // login
     // logout
     socket
+      .on('token acquired', token => {
+        localStorage.setItem(UserService.TOKEN, token);
+      })
       .on('connect', () => {
         if (this.isLoggedIn()) {
           const userName = this.getUserName();
-          this.socket.emit('login', userName);
+          this.socket.emit('login', {
+            userName: userName,
+            token: localStorage.getItem(UserService.TOKEN)
+          });
         }
       })
       .on('notify', (data: NotificationDto) => {
@@ -48,7 +55,11 @@ export class UserService {
 
   public login(userName: string): void {
     localStorage.setItem(UserService.USER_NAME_KEY, userName);
-    this.socket.emit('login', userName);
+    const token = localStorage.getItem(UserService.TOKEN);
+    this.socket.emit('login', {
+      userName: userName,
+      token: token
+    });
     this.loginSubject.next(userName);
   }
 
