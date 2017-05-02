@@ -27,6 +27,12 @@ export class UtilityService {
   }
 
   public sort(a: string, b: string): number {
+    if (a === null) {
+      a = '';
+    }
+    if (b === null) {
+      b = '';
+    }
     const A = a.toLowerCase();
     const B = b.toLowerCase();
     if (A === B) {

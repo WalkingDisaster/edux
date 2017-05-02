@@ -14,7 +14,7 @@ server.listen(port, function () {
 });
 
 accountsModule.init(io);
-
 chatModule.init(io);
+
 accountsModule.userAdded.subscribe(user => console.log(`***via event: user "${user}" logged in`));
 accountsModule.userRemoved.subscribe(user => console.log(`***via event: user "${user}" logged out`));

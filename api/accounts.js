@@ -11,7 +11,7 @@ exports.init = function (io) {
 
     io.on('connection', function (socket) {
         var handshake = socket.handshake;
-        var token = `${handshake.issued}-${handshake.headers.cookie}-${handshake.address}`;
+        var token = `${handshake.headers.cookie}-${handshake.address}`;
 
         socket.userToken = token;
         console.log(`Connection established with unique token ${socket.userToken}`);
@@ -22,9 +22,9 @@ exports.init = function (io) {
 
             if (users.has(userName)) {
                 var expectedToken = users.get(userName);
-                if (expectedToken !== userToken) {
+                if (expectedToken !== token) {
                     // error
-                    console.log(`User "${userName}" was already reserved by another socket. Expected token "${users.get(userName)}", but got "${userToken}"`)
+                    console.log(`User "${userName}" was already reserved by another socket. Expected token "${users.get(userName)}", but got "${token}"`)
                     error = true;
                 }
             } else {

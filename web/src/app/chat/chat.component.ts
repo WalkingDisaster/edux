@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
 import { ChatService } from '../chat.service';
@@ -19,6 +20,8 @@ import { ChatUser } from '../models/chat-user';
 })
 export class ChatComponent implements OnInit, Debouncable {
 
+  private joined = false;
+
   timeoutId: number;
   messages: Array<ChatMessage> = new Array<ChatMessage>();
   chatUsers: Array<ChatUser> = new Array<ChatUser>();
@@ -29,7 +32,21 @@ export class ChatComponent implements OnInit, Debouncable {
     private chatService: ChatService
     , private userService: UserService
     , private utility: UtilityService
-  ) { }
+    , private router: Router
+  ) {
+    this.router.events.forEach(event => {
+      if (event instanceof NavigationStart) {
+        if (event.url === '/chat') {
+          this.chatService.joinAs(this.userService.getUserName());
+          this.joined = true;
+        }
+        else if (this.joined) {
+          this.chatService.leave();
+          this.joined = false;
+        }
+      }
+    });
+  }
 
   ngOnInit() {
     this.chatService.userSubject.subscribe(
@@ -42,7 +59,8 @@ export class ChatComponent implements OnInit, Debouncable {
       () => this.noMoreMessages());
 
     this.chatUsers = Array.from(this.chatService.users, u => new ChatUser(u, false));
-    this.chatService.connectAs(this.userService.getUserName());
+    this.chatService.joinAs(this.userService.getUserName());
+    this.joined = true;
   }
 
   // The user list must be updated somehow
@@ -57,10 +75,7 @@ export class ChatComponent implements OnInit, Debouncable {
 
     switch (event.type) {
       case UserChangeType.Left:
-        const index = this.chatUsers.indexOf(theUser);
-        if (index > 0) {
-          this.chatUsers = this.chatUsers.splice(index, 1);
-        }
+        this.chatUsers = Array.from(this.chatUsers.filter(u => u !== theUser));
         break;
       case UserChangeType.Typing:
         theUser.typing = true;

@@ -14,22 +14,30 @@ exports.init = function (io) {
             });
         });
 
+        function robotRollCall() {
+            socket.emit('robot roll call', {
+                users: Array.from(users)
+            });
+        };
+
         // when the client emits 'add user', this listens and executes
-        socket.on('add user', function (userName) {
+        socket.on('join', function (userName) {
             if (!users.has(userName)) {
                 users.add(userName);
-                console.log(`User ${userName} logged in.`)
+                console.log(`User ${userName} joined chat.`)
             }
 
             // we store the userName in the socket session for this client
             socket.userName = userName;
-            socket.emit('login', {
-                users: Array.from(users)
-            });
+            robotRollCall();
             // echo globally (all clients) that a person has connected
             socket.broadcast.emit('user joined', {
                 userName: socket.userName
             });
+        });
+
+        socket.on('who is here', function () {
+            robotRollCall();
         });
 
         // when the client emits 'typing', we broadcast it to others
@@ -46,8 +54,8 @@ exports.init = function (io) {
             });
         });
 
-        // when the user disconnects.. perform this
-        socket.on('disconnect', function () {
+        // when the user leaves.. perform this
+        socket.on('leave', function () {
             users.delete(socket.userName);
 
             // echo globally that this client has left

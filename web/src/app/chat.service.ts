@@ -16,7 +16,7 @@ import * as io from 'socket.io-client';
 @Injectable()
 export class ChatService {
 
-    private connected = false;
+    private joined = false;
     private isTyping = false;
     private socket: SocketIOClient.Socket;
     private currentUser: string;
@@ -32,7 +32,7 @@ export class ChatService {
         this.messageSubject = new Subject<MessageEvent>();
 
         this.initSocket(this.socketService.connect('chat'));
-        this.userService.logoutSubject.subscribe(() => this.socket.disconnect());
+        // this.userService.logoutSubject.subscribe(() => this.socket.disconnect());
     }
 
     private initSocket(socket: SocketIOClient.Socket): void {
@@ -41,7 +41,7 @@ export class ChatService {
     }
     private subscribeEvents(socket: SocketIOClient.Socket): void {
         socket
-            .on('login', users => this.replaceUsers(users))
+            .on('robot roll call', users => this.replaceUsers(users))
             .on('user joined', user => this.addUser(user))
             .on('user left', user => this.removeUser(user))
             .on('new message', message => this.messageReceived(message))
@@ -92,25 +92,27 @@ export class ChatService {
     }
 
     private onDisconnected(): void {
-        this.connected = false;
     }
 
     private onReconnected(): void {
-        this.connect();
+        this.join();
     }
 
-    private connect(): void {
-        if (!this.connected) {
-            this.socket.emit('add user', this.currentUser);
-            this.connected = true;
-        }
+    private join(): void {
+        this.socket.emit('join', this.currentUser);
+        this.joined = true;
     }
 
-    public connectAs(userName: string): void {
+    public joinAs(userName: string): void {
         if (this.currentUser !== userName) {
             this.currentUser = userName;
         }
-        this.connect();
+        this.join();
+    }
+
+    public leave(): void {
+        this.socket.emit('leave');
+        this.joined = false;
     }
 
     public sendMessage(message: string): void {
