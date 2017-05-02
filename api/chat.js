@@ -36,10 +36,6 @@ exports.init = function (io) {
             });
         });
 
-        socket.on('who is here', function () {
-            robotRollCall();
-        });
-
         // when the client emits 'typing', we broadcast it to others
         socket.on('typing', function () {
             socket.broadcast.emit('typing', {

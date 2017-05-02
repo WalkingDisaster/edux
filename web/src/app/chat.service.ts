@@ -32,7 +32,6 @@ export class ChatService {
         this.messageSubject = new Subject<MessageEvent>();
 
         this.initSocket(this.socketService.connect('chat'));
-        // this.userService.logoutSubject.subscribe(() => this.socket.disconnect());
     }
 
     private initSocket(socket: SocketIOClient.Socket): void {
