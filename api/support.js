@@ -44,5 +44,25 @@ exports.init = function (io) {
             })
             socket.emit('get-one-' + id, found);
         });
+
+        socket.on('editing', function (data) {
+            var id = data.id;
+            var userName = data.userName;
+            var fieldName = data.fieldName;
+            socket.broadcast.emit(`editing-${id}-${fieldName}`, {
+                userName: userName
+            })
+        });
+
+        socket.on('release', function (data) {
+            var id = data.id;
+            var userName = data.userName;
+            var fieldName = data.fieldName;
+            var newValue = data.value;
+            socket.broadcast.emit(`released-${id}-${fieldName}`, {
+                userName: userName,
+                value: newValue
+            })
+        })
     });
 }

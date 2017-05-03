@@ -27,7 +27,7 @@ export class SupportRequestModel {
                 new SupportRequestStateHistoryItem(new Date(), this.userService.getUserName(), 'Identified', null)
             ];
         }
-        this.lockManager = this.lockService.manage();
+        this.lockManager = this.lockService.manage(entity.id);
         this.title = this.lockManager.wrapField(
             'title',
             () => entity.title,

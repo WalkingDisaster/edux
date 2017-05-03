@@ -111,7 +111,7 @@ export class ChatComponent implements OnInit, Debouncable {
       this.sendMessage();
       return;
     }
-    this.utility.debounce(this).subscribe(() => this.chatService.stopTyping())
+    this.utility.debounce(this, 1500).subscribe(() => this.chatService.stopTyping())
     this.chatService.typing();
   }
 

@@ -14,7 +14,7 @@
   </div>
   <div>
     <label>Title: </label>
-    <input [(ngModel)]="supportRequest.title.value" placeholder="name" />
+    <input [disabled]="supportRequest.title.locked" [(ngModel)]="supportRequest.title.value" placeholder="name" /><span *ngIf="supportRequest.title.locked">{{supportRequest.title.lockedBy}}</span>
   </div>
   <div>
     <label>Description: </label>

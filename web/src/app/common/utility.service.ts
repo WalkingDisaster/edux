@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class UtilityService {
@@ -9,7 +10,7 @@ export class UtilityService {
   constructor() { }
 
 
-  public debounce(target: Debouncable): Subject<void> {
+  public debounce(target: Debouncable, timeout: number): Observable<void> {
     if (!this.subjects.has(target)) {
       this.subjects.set(target, new Subject<void>());
     }
@@ -22,7 +23,7 @@ export class UtilityService {
 
     target.timeoutId = window.setTimeout(() => {
       subject.next();
-    }, 500);
+    }, timeout);
     return subject;
   }
 

@@ -1,26 +1,43 @@
 import { Injectable } from '@angular/core';
 
+import { UtilityService } from '../common/utility.service';
+import { SocketService } from '../common/socket.service';
+import { UserService } from '../common/user.service';
+
 import { FieldWrapper } from './field-wrapper';
 import { ListWrapper } from './list-wrapper';
 import { WrappedItem } from './wrapped-item';
 
 @Injectable()
 export class SoftLockFieldService {
-  constructor() { }
+  private userName: string;
+  private socket: SocketIOClient.Socket;
 
-  public manage(): SoftLockFieldManager {
-    return new SoftLockFieldManager();
+  constructor(
+    private userService: UserService
+    , private utilityService: UtilityService
+    , private socketService: SocketService
+  ) {
+    this.userName = userService.getUserName();
   }
 
+  public manage(id: number): SoftLockFieldManager {
+    return new SoftLockFieldManager(this.utilityService, this.socketService.connect('support'), id, this.userName);
+  }
 }
 
 export class SoftLockFieldManager {
   private items = new Map<string, WrappedItem>();
 
-  constructor() { }
+  constructor(
+    private utilityService: UtilityService
+    , private socket: SocketIOClient.Socket
+    , private id: number
+    , private userName: string
+  ) { }
 
   public wrapField<T>(name: string, accessor: () => T, mutator: (T) => void): FieldWrapper<T> {
-    const newField = new FieldWrapper<T>(name, accessor, mutator);
+    const newField = new FieldWrapper<T>(this.utilityService, this.socket, this.id, this.userName, name, accessor, mutator);
     this.items.set(name, newField);
     return newField;
   }
