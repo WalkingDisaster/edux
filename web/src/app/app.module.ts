@@ -9,6 +9,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { ChatRoutingModule } from './chat/chat-routing.module';
 import { LoginRoutingModule } from './login/login-routing.module';
 import { NotificationRoutingModule } from './notification/notification-routing.module';
+import { SupportRequestRoutingModule } from './support-request/support-request-routing.module';
 
 import { AppComponent } from './app.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
@@ -21,7 +22,12 @@ import { ChatService } from './chat/chat.service';
 import { UserService } from './common/user.service';
 import { UtilityService } from './common/utility.service';
 import { NotificationService } from './notification/notification.service';
+import { SupportRequestService } from './support-request/services/support-request.service';
+
 import { NotificationComponent } from './notification/notification.component';
+import { SupportRequestComponent } from './support-request/support-request.component';
+import { SupportRequestListComponent } from './support-request/list/support-request-list.component';
+import { SupportRequestItemComponent } from './support-request/item/support-request-item.component';
 
 @NgModule({
   declarations: [
@@ -30,11 +36,15 @@ import { NotificationComponent } from './notification/notification.component';
     HomeComponent,
     ChatComponent,
     LoginComponent,
-    NotificationComponent
+    NotificationComponent,
+    SupportRequestComponent,
+    SupportRequestListComponent,
+    SupportRequestItemComponent
   ],
   imports: [
     ChatRoutingModule,
     NotificationRoutingModule,
+    SupportRequestRoutingModule,
     AppRoutingModule,
     BrowserModule,
     FormsModule,
@@ -47,7 +57,8 @@ import { NotificationComponent } from './notification/notification.component';
     UserService,
     UtilityService,
     NotificationService,
-    NotificationBarService
+    NotificationBarService,
+    SupportRequestService
   ],
   bootstrap: [AppComponent]
 })

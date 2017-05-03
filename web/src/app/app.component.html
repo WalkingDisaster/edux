@@ -7,6 +7,7 @@
 <nav>
   <a routerLink="/" routerLinkActive="active">Home</a>
   <a routerLink="/chat" routerLinkActive="active">Chat</a>
+  <a routerLink="/support" routerLinkActive="active">Support Requests</a>
   <span *ngIf="!loggedIn" class="link" (click)="login()">login</span>
   <span *ngIf="loggedIn" class="link" (click)="logout()">logout</span>
 </nav>

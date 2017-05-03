@@ -1,0 +1,7 @@
+<ul class="items">
+  <li *ngFor="let supportRequest of supportRequests" (click)="onSelect(supportRequest)" [class.selected]="isSelected(supportRequest)">
+    {{supportRequest.title}}
+  </li>
+</ul>
+
+<router-outlet></router-outlet>
