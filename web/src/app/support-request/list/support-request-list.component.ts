@@ -31,9 +31,11 @@ export class SupportRequestListComponent implements OnInit {
 
   ngOnInit() {
     this.supportRequests = new Array<SupportRequestModel>();
-    this.supportRequestService.getSupportRequests()
+    this.supportRequestService
+      .supportRequestEntities
       .map<SupportRequest, SupportRequestModel>(entity => new SupportRequestModel(this.lockService, this.userService, entity))
-      .subscribe(model => this.supportRequests.push(model));
+      .subscribe(m => this.supportRequests.push(m));
+    this.supportRequestService.requestUpdate();
   }
 
   public onSelect(supportRequest: SupportRequestModel): void {

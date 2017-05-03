@@ -1,6 +1,7 @@
 const accountsModule = require('./accounts');
 const chatModule = require('./chat');
 const reportsModule = require('./reports');
+const supportRequestModule = require('./support');
 
 // Setup basic express server
 var express = require('express');
@@ -24,3 +25,4 @@ accountsModule.userRemoved.subscribe(user => {
 });
 
 reportsModule.init(io);
+supportRequestModule.init(io);

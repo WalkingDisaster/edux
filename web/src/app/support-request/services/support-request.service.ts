@@ -1,48 +1,38 @@
 import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 
 import { SupportRequest, SupportRequestStateHistoryItem } from '../entities/support-request';
+import { SocketService } from '../../common/socket.service';
 
 @Injectable()
 export class SupportRequestService {
 
-  private maxId = 0;
-  private supportRequests: Array<SupportRequest>;
+  private socket: SocketIOClient.Socket;
+  private supportRequestSubject = new Subject<SupportRequest>();
 
-  constructor() {
-    this.supportRequests = [
-      this.CreateDummySupportRequest('First Request', 'First request details'),
-      this.CreateDummySupportRequest('Second Request', 'Second request details')
-    ];
-  }
-
-  private CreateDummySupportRequest(title: string, description: string): SupportRequest {
-    const request = new SupportRequest();
-
-    request.id = this.maxId++;
-    request.recorded = new Date();
-    request.recordedBy = 'WalkingDisaster';
-    request.title = title;
-    request.description = description;
-    const historyItem = new SupportRequestStateHistoryItem(request.recorded, 'WalkingDisaster', 'Identified', null);
-    request.changeHistory = [historyItem];
-
-    return request;
-  }
-
-  public getSupportRequests(): Observable<SupportRequest> {
-    return new Observable(sub => {
-      for (const request of this.supportRequests) {
-        sub.next(request);
-      }
-      sub.complete();
+  constructor(private socketService: SocketService) {
+    this.socket = socketService.connect('support');
+    this.socket.on('nextItem', (data: SupportRequest) => {
+      this.supportRequestSubject.next(data);
     });
   }
 
-  public getSupportRequest(id: number | string): Promise<SupportRequest> {
+  public requestUpdate() {
+    this.socket.emit('get', { id: null });
+  }
+
+  public getSupportRequest(id: number): Promise<SupportRequest> {
     return new Promise((resolve, reject) => {
-      resolve(this.supportRequests.find(request => request.id === +id));
+      this.socket.on('get-one-' + id, (data: SupportRequest) => {
+        resolve(data);
+      })
+      this.socket.emit('get-one', { id: id });
     });
+  }
+
+  get supportRequestEntities(): Observable<SupportRequest> {
+    return this.supportRequestSubject;
   }
 }
