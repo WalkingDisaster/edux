@@ -7,6 +7,7 @@ import 'rxjs/add/operator/map';
 import { SupportRequest } from '../entities/support-request';
 import { SupportRequestModel } from '../models/support-request-model';
 
+import { SoftLockFieldService } from '../../common/soft-lock-field.service';
 import { UserService } from '../../common/user.service';
 import { SupportRequestService } from '../services/support-request.service';
 
@@ -21,7 +22,8 @@ export class SupportRequestListComponent implements OnInit {
   public currentItem: number;
 
   constructor(
-    private userService: UserService
+    private lockService: SoftLockFieldService
+    , private userService: UserService
     , private supportRequestService: SupportRequestService
     , private route: ActivatedRoute
     , private router: Router
@@ -30,7 +32,7 @@ export class SupportRequestListComponent implements OnInit {
   ngOnInit() {
     this.supportRequests = new Array<SupportRequestModel>();
     this.supportRequestService.getSupportRequests()
-      .map<SupportRequest, SupportRequestModel>(entity => SupportRequestModel.mapFrom(entity, this.userService))
+      .map<SupportRequest, SupportRequestModel>(entity => new SupportRequestModel(this.lockService, this.userService, entity))
       .subscribe(model => this.supportRequests.push(model));
   }
 

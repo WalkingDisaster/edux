@@ -17,13 +17,13 @@ import { HomeComponent } from './home/home.component';
 import { ChatComponent } from './chat/chat.component';
 import { LoginComponent } from './login/login.component';
 
+import { SoftLockFieldService } from './common/soft-lock-field.service';
 import { SocketService } from './common/socket.service';
 import { ChatService } from './chat/chat.service';
 import { UserService } from './common/user.service';
 import { UtilityService } from './common/utility.service';
 import { NotificationService } from './notification/notification.service';
 import { SupportRequestService } from './support-request/services/support-request.service';
-import { SupportRequestItemResolverService } from './support-request/services/support-request-item-resolver.service';
 
 import { NotificationComponent } from './notification/notification.component';
 import { SupportRequestComponent } from './support-request/support-request.component';
@@ -53,14 +53,14 @@ import { SupportRequestItemComponent } from './support-request/item/support-requ
     NotificationBarModule
   ],
   providers: [
+    SoftLockFieldService,
     SocketService,
     ChatService,
     UserService,
     UtilityService,
     NotificationService,
     NotificationBarService,
-    SupportRequestService,
-    SupportRequestItemResolverService
+    SupportRequestService
   ],
   bootstrap: [AppComponent]
 })

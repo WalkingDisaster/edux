@@ -1,6 +1,6 @@
 <ul class="items">
   <li *ngFor="let supportRequest of supportRequests" (click)="onSelect(supportRequest)" [class.selected]="isSelected(supportRequest)">
-    {{supportRequest.title}}
+    {{supportRequest.title.value}}
   </li>
 </ul>
 

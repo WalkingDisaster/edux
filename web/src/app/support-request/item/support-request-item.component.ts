@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
 
 import { slideInDownAnimation } from '../../common/animations';
 
+import { SoftLockFieldService } from '../../common/soft-lock-field.service';
 import { SupportRequestService } from '../services/support-request.service';
 import { UserService } from '../../common/user.service';
 
@@ -20,28 +21,33 @@ export class SupportRequestItemComponent implements OnInit {
   @HostBinding('style.position') position = 'absolute';
 
   public supportRequest: SupportRequestModel;
-  public title: string;
 
   constructor(
     private route: ActivatedRoute
     , private router: Router
+    , private lockService: SoftLockFieldService
     , private userService: UserService
     , private supportRequestService: SupportRequestService
   ) { }
 
   ngOnInit() {
-    /*    this.route.data
-          .subscribe((data: { model: SupportRequestModel }) => {
-            this.title = data.model.title;
-            this.supportRequest = data.model;
-          });*/
-
     this.route.params.subscribe((params: Params) => {
       const id: number = +params['id'];
       this.supportRequestService.getSupportRequest(id).then(entity => {
-        this.supportRequest = SupportRequestModel.mapFrom(entity, this.userService);
-        this.title = this.supportRequest.title;
+        this.supportRequest = new SupportRequestModel(this.lockService, this.userService, entity);
       });
     });
+  }
+
+  public cancel(): void {
+    this.supportRequest.reset();
+  }
+
+  get canSave(): boolean {
+    return (this.supportRequest !== null && this.supportRequest.isDirty);
+  }
+
+  get isDirty(): boolean {
+    return this.supportRequest.isDirty;
   }
 }
