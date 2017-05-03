@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import { NotificationService } from './notification.service';
 
+import { Notification } from '../models/notification';
+
 @Component({
   selector: 'app-notification',
   templateUrl: './notification.component.html',
@@ -9,7 +11,7 @@ import { NotificationService } from './notification.service';
 })
 export class NotificationComponent implements OnInit {
 
-  notifications: Array<string>;
+  notifications: Array<Notification>;
 
   constructor(
     private notificationService: NotificationService
@@ -23,7 +25,7 @@ export class NotificationComponent implements OnInit {
   }
 
   public clearAllNotifications(): void {
-    this.notificationService.push('Notifications cleared.');
+    this.notificationService.push(new Notification('Notifications cleared.'));
     this.notificationService.clear();
     this.notifications = this.notificationService.getNofications();
   }

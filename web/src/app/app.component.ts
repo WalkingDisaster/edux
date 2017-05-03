@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
     this.userService.loginSubject.subscribe(userName => this.onLoggedIn(userName));
     this.userService.logoutSubject.subscribe(() => this.onLoggedOut());
     this.userService.notification.subscribe(data => {
-      this.notificationService.push(data.message);
+      this.notificationService.push(data);
     });
     this.loggedIn = this.userService.isLoggedIn();
     if (this.loggedIn) { this.onLoggedIn(this.userService.getUserName()); } else { this.onLoggedOut(); }

@@ -2,7 +2,7 @@
   <div>Here are your notficiations</div>
   <div><button (click)="clearAllNotifications()">Get rid of these</button></div>
   <ul *ngIf="notifications.length > 0">
-    <li *ngFor="let notification of notifications">{{notification}}</li>
+    <li *ngFor="let notification of notifications">{{notification.message}}</li>
   </ul>
   <div *ngIf="notifications.length == 0">You're all caught up!</div>
 </div>
