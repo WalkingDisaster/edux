@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { UserService } from './common/user.service';
-import { NotificationBarService, NotificationType } from 'angular2-notification-bar';
+import { NotificationService } from './notification/notification.service';
 
 @Component({
   selector: 'app-root',
@@ -11,21 +11,23 @@ import { NotificationBarService, NotificationType } from 'angular2-notification-
 })
 export class AppComponent implements OnInit {
 
-  title = 'Thingzes';
-  userMessage: string;
-  loggedIn: boolean;
+  public pendingNotifications = 0;
+  public title = 'Thingzes';
+  public userMessage: string;
+  public loggedIn: boolean;
 
   constructor(
-    private notificationBarService: NotificationBarService
-    , private userService: UserService
+    private userService: UserService
     , private router: Router
+    , private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
+    this.notificationService.notificationCount.subscribe(count => this.pendingNotifications = count);
     this.userService.loginSubject.subscribe(userName => this.onLoggedIn(userName));
     this.userService.logoutSubject.subscribe(() => this.onLoggedOut());
     this.userService.notification.subscribe(data => {
-      this.notificationBarService.create({ message: data.message, type: NotificationType.Info });
+      this.notificationService.push(data.message);
     });
     this.loggedIn = this.userService.isLoggedIn();
     if (this.loggedIn) { this.onLoggedIn(this.userService.getUserName()); } else { this.onLoggedOut(); }

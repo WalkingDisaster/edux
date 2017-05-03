@@ -8,6 +8,7 @@ import { NotificationBarModule, NotificationBarService } from 'angular2-notifica
 import { AppRoutingModule } from './app-routing.module';
 import { ChatRoutingModule } from './chat/chat-routing.module';
 import { LoginRoutingModule } from './login/login-routing.module';
+import { NotificationRoutingModule } from './notification/notification-routing.module';
 
 import { AppComponent } from './app.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
@@ -33,6 +34,7 @@ import { NotificationComponent } from './notification/notification.component';
   ],
   imports: [
     ChatRoutingModule,
+    NotificationRoutingModule,
     AppRoutingModule,
     BrowserModule,
     FormsModule,
@@ -44,6 +46,7 @@ import { NotificationComponent } from './notification/notification.component';
     ChatService,
     UserService,
     UtilityService,
+    NotificationService,
     NotificationBarService
   ],
   bootstrap: [AppComponent]
