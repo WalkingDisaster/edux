@@ -8,19 +8,11 @@ export class SupportRequest {
     public changeHistory: Array<SupportRequestStateHistoryItem>;
 }
 
-export enum SupportRequestState {
-    Identified,
-    Assigned,
-    InProgress,
-    Resolved,
-    Rejected
-}
-
 export class SupportRequestStateHistoryItem {
     constructor(
         public changeTime: Date,
         public changedBy: string,
-        public changedTo: SupportRequestState,
+        public changedTo: string,
         public comments: string
     ) { }
 }

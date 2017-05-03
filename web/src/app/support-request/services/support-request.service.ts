@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
 
-import { SupportRequest, SupportRequestState, SupportRequestStateHistoryItem } from '../entities/support-request';
+import { SupportRequest, SupportRequestStateHistoryItem } from '../entities/support-request';
 
 @Injectable()
 export class SupportRequestService {
@@ -25,7 +25,7 @@ export class SupportRequestService {
     request.recordedBy = 'WalkingDisaster';
     request.title = title;
     request.description = description;
-    const historyItem = new SupportRequestStateHistoryItem(request.recorded, 'WalkingDisaster', SupportRequestState.Identified, null);
+    const historyItem = new SupportRequestStateHistoryItem(request.recorded, 'WalkingDisaster', 'Identified', null);
     request.changeHistory = [historyItem];
 
     return request;

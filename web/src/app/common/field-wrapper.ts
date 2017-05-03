@@ -1,4 +1,6 @@
-export class FieldWrapper<T> implements WrappedField {
+import { WrappedItem } from './wrapped-item';
+
+export class FieldWrapper<T> implements WrappedItem {
 
     private originalValue: T;
 
@@ -21,9 +23,4 @@ export class FieldWrapper<T> implements WrappedField {
     public reset(): void {
         this.value = this.originalValue;
     }
-}
-
-export interface WrappedField {
-    readonly isDirty: boolean;
-    reset(): void;
 }

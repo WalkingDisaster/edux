@@ -1,8 +1,11 @@
+import { Observable } from 'rxjs/Observable';
+
 import { UserService } from '../../common/user.service';
 import { SoftLockFieldService, SoftLockFieldManager } from '../../common/soft-lock-field.service';
 
-import { SupportRequest, SupportRequestState, SupportRequestStateHistoryItem } from '../entities/support-request';
+import { SupportRequest, SupportRequestStateHistoryItem } from '../entities/support-request';
 import { FieldWrapper } from '../../common/field-wrapper';
+import { ListWrapper } from '../../common/list-wrapper';
 
 export class SupportRequestModel {
 
@@ -11,7 +14,7 @@ export class SupportRequestModel {
     public title: FieldWrapper<string>;
     public description: FieldWrapper<string>;
     public assignedTo: FieldWrapper<string>;
-    public changeHistory: Array<SupportRequestModelStateHistoryItem>;
+    public changeHistory: ListWrapper<SupportRequestStateHistoryItem>;
 
     constructor(
         private lockService: SoftLockFieldService
@@ -21,25 +24,30 @@ export class SupportRequestModel {
         if (entity === null) {
             this.entity = new SupportRequest();
             this.entity.changeHistory = [
-                new SupportRequestStateHistoryItem(new Date(), this.userService.getUserName(), SupportRequestState.Identified, null)
+                new SupportRequestStateHistoryItem(new Date(), this.userService.getUserName(), 'Identified', null)
             ];
         }
         this.lockManager = this.lockService.manage();
-        this.title = this.lockManager.wrap(
+        this.title = this.lockManager.wrapField(
             'title',
             () => entity.title,
             t => entity.title = t
         );
-        this.description = this.lockManager.wrap(
+        this.description = this.lockManager.wrapField(
             'description',
             () => entity.description,
             d => entity.description = d
         )
-        this.assignedTo = this.lockManager.wrap(
+        this.assignedTo = this.lockManager.wrapField(
             'assignedTo',
             () => entity.assignedTo,
             a => entity.assignedTo = a
         );
+        this.changeHistory = this.lockManager.wrapList(
+            'historyList',
+            () => entity.changeHistory,
+            h => entity.changeHistory.push(h)
+        )
     }
 
     get id(): number {
@@ -56,50 +64,45 @@ export class SupportRequestModel {
 
     get resolvedOn(): Date {
         const currentStatus = this.currentStatus;
-        if (currentStatus.isFinal) {
+        if (this.statusIsFinal(currentStatus.changedTo)) {
             return currentStatus.changeTime;
         }
     }
 
     get resolvedBy(): string {
         const currentStatus = this.currentStatus;
-        if (currentStatus.isFinal) {
+        if (this.statusIsFinal(currentStatus.changedTo)) {
             return currentStatus.changedBy;
         }
     }
 
-    get currentStatus(): SupportRequestModelStateHistoryItem {
+    private statusIsFinal(status: string) {
+        return (status === 'Resolved' || status === 'Rejected');
+    }
+
+    get currentStateString(): string {
+        const current = this.currentStatus;
+        return this.currentStatus.changedTo;
+    }
+
+    get currentStatus(): SupportRequestStateHistoryItem {
         let last: SupportRequestStateHistoryItem;
         for (const item of this.entity.changeHistory) {
-            if (last === null || item.changeTime > last.changeTime) {
+            if (!last) {
+                last = item;
+            } else if (item.changeTime > last.changeTime) {
                 last = item;
             }
         }
-        return new SupportRequestModelStateHistoryItem(last.changeTime, last.changedBy, this.mapEnum(last.changedTo), last.comments);
+        return last;
     }
 
-    private mapEnum(source: SupportRequestState): SupportRequestModelState {
-        switch (source) {
-            case SupportRequestState.Assigned:
-                return SupportRequestModelState.Assigned;
-            case SupportRequestState.Identified:
-                return SupportRequestModelState.Identified;
-            case SupportRequestState.InProgress:
-                return SupportRequestModelState.InProgress;
-            case SupportRequestState.Rejected:
-                return SupportRequestModelState.Rejected;
-            case SupportRequestState.Resolved:
-                return SupportRequestModelState.Resolved;
-        }
-
-    }
-
-    public changeState(newState: SupportRequestModelState, comments: string): void {
+    public changeState(newState: string, comments: string): void {
         if (this.canChangeState) {
             const currentUser = this.userService.getUserName();
             const now = new Date();
-            const toAdd = new SupportRequestModelStateHistoryItem(now, currentUser, newState, comments);
-            this.changeHistory.push(toAdd);
+            const toAdd = new SupportRequestStateHistoryItem(now, currentUser, newState, comments);
+            this.changeHistory.addItem(toAdd);
         }
     }
 
@@ -113,26 +116,5 @@ export class SupportRequestModel {
 
     public reset(): void {
         this.lockManager.reset();
-    }
-}
-
-export enum SupportRequestModelState {
-    Identified,
-    Assigned,
-    InProgress,
-    Resolved,
-    Rejected
-}
-
-export class SupportRequestModelStateHistoryItem {
-    constructor(
-        public changeTime: Date,
-        public changedBy: string,
-        public changedTo: SupportRequestModelState,
-        public comments: string
-    ) { }
-
-    get isFinal(): boolean {
-        return (this.changedTo === SupportRequestModelState.Rejected || this.changedTo === SupportRequestModelState.Resolved);
     }
 }

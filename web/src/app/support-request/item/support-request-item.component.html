@@ -1,7 +1,17 @@
 <div *ngIf="supportRequest">
   <h3>"{{ supportRequest.title.value }}"</h3>
   <div>
-    <label>Id: </label>{{ supportRequest.id }}</div>
+    <label>Id: </label>{{ supportRequest.id }}
+  </div>
+  <div>
+    <label>Recorded: </label>{{ supportRequest.recorded }}
+  </div>
+  <div>
+    <label>Recorded By: </label>{{ supportRequest.recordedBy }}
+  </div>
+  <div>
+    <label>Current Status: </label>{{ supportRequest.currentStateString}}
+  </div>
   <div>
     <label>Title: </label>
     <input [(ngModel)]="supportRequest.title.value" placeholder="name" />
@@ -9,6 +19,16 @@
   <div>
     <label>Description: </label>
     <textarea [(ngModel)]="supportRequest.description.value" placeholder="description"></textarea>
+  </div>
+  <div>
+    <label>Assigned To: </label>
+    <input [(ngModel)]="supportRequest.assignedTo.value" placeholder="assignee" />
+  </div>
+  <div>
+    <label>Resolved On: </label>{{supportRequest.resolvedOn}}
+  </div>
+  <div>
+    <label>Resolved By: </label>{{supportRequest.resolvedBy}}
   </div>
   <p>
     <button [disabled]="!canSave" (click)="save()">Save</button>

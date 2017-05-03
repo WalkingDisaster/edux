@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 
-import { FieldWrapper, WrappedField } from './field-wrapper';
+import { FieldWrapper } from './field-wrapper';
+import { ListWrapper } from './list-wrapper';
+import { WrappedItem } from './wrapped-item';
 
 @Injectable()
 export class SoftLockFieldService {
@@ -13,19 +15,25 @@ export class SoftLockFieldService {
 }
 
 export class SoftLockFieldManager {
-  private fields = new Map<string, WrappedField>();
+  private items = new Map<string, WrappedItem>();
 
   constructor() { }
 
-  public wrap<T>(name: string, accessor: () => T, mutator: (T) => void): FieldWrapper<T> {
+  public wrapField<T>(name: string, accessor: () => T, mutator: (T) => void): FieldWrapper<T> {
     const newField = new FieldWrapper<T>(name, accessor, mutator);
-    this.fields.set(name, newField);
+    this.items.set(name, newField);
     return newField;
+  }
+
+  public wrapList<T>(name: string, accessor: () => Array<T>, add: (T) => void): ListWrapper<T> {
+    const newList = new ListWrapper<T>(name, accessor, add);
+    this.items.set(name, newList);
+    return newList;
   }
 
   public get isDirty(): boolean {
     let result: boolean;
-    this.fields.forEach((value, key) => {
+    this.items.forEach((value, key) => {
       if (value.isDirty) {
         result = true;
       }
@@ -34,7 +42,7 @@ export class SoftLockFieldManager {
   }
 
   public reset(): void {
-    this.fields.forEach((value, key) => {
+    this.items.forEach((value, key) => {
       if (value.isDirty) {
         value.reset();
       }
