@@ -40,7 +40,9 @@ export class SupportRequestService {
     });
   }
 
-  public getSupportRequest(id: number): Promise<SupportRequest> {
-    return new Promise(() => this.supportRequests.find(request => request.id === id));
+  public getSupportRequest(id: number | string): Promise<SupportRequest> {
+    return new Promise((resolve, reject) => {
+      resolve(this.supportRequests.find(request => request.id === +id));
+    });
   }
 }

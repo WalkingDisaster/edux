@@ -30,9 +30,7 @@ export class SupportRequestListComponent implements OnInit {
   ngOnInit() {
     this.supportRequests = new Array<SupportRequestModel>();
     this.supportRequestService.getSupportRequests()
-      .map<SupportRequest, SupportRequestModel>(entity => {
-        return new SupportRequestModel(this.userService, entity.id, entity.recorded, entity.recordedBy, entity.title, entity.description);
-      })
+      .map<SupportRequest, SupportRequestModel>(entity => SupportRequestModel.mapFrom(entity, this.userService))
       .subscribe(model => this.supportRequests.push(model));
   }
 

@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SupportRequestComponent } from './support-request.component';
 import { AuthGuard } from '../common/auth-guard.service';
+import { SupportRequestItemResolverService } from './services/support-request-item-resolver.service';
 
 import { SupportRequestListComponent } from './list/support-request-list.component';
 import { SupportRequestItemComponent } from './item/support-request-item.component';
@@ -19,7 +20,10 @@ const supportRequstRoutes: Routes = [
                 children: [
                     {
                         path: ':id',
-                        component: SupportRequestItemComponent
+                        component: SupportRequestItemComponent/*,
+                        resolve: {
+                            supportRequest: SupportRequestItemResolverService
+                        }*/
                     }
                 ]
             }

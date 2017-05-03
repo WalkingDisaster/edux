@@ -23,6 +23,7 @@ import { UserService } from './common/user.service';
 import { UtilityService } from './common/utility.service';
 import { NotificationService } from './notification/notification.service';
 import { SupportRequestService } from './support-request/services/support-request.service';
+import { SupportRequestItemResolverService } from './support-request/services/support-request-item-resolver.service';
 
 import { NotificationComponent } from './notification/notification.component';
 import { SupportRequestComponent } from './support-request/support-request.component';
@@ -58,7 +59,8 @@ import { SupportRequestItemComponent } from './support-request/item/support-requ
     UtilityService,
     NotificationService,
     NotificationBarService,
-    SupportRequestService
+    SupportRequestService,
+    SupportRequestItemResolverService
   ],
   bootstrap: [AppComponent]
 })

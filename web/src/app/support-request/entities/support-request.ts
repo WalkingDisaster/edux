@@ -5,8 +5,6 @@ export class SupportRequest {
     public title: string;
     public description: string;
     public assignedTo: string;
-    public resolvedBy: string;
-    public resolvedOn: Date;
     public changeHistory: Array<SupportRequestStateHistoryItem>;
 }
 
