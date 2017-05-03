@@ -30,6 +30,11 @@
   <div>
     <label>Resolved By: </label>{{supportRequest.resolvedBy}}
   </div>
+  <div>
+    <div *ngFor="let item of supportRequest.changeHistory.items">
+      {{item.changedTo}} by {{item.changedBy}} on {{item.changeTime}}
+    </div>
+  </div>
   <p>
     <button [disabled]="!canSave" (click)="save()">Save</button>
     <button [disabled]="!isDirty" (click)="cancel()">Cancel</button>
