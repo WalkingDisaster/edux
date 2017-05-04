@@ -67,16 +67,4 @@ export class SupportRequestItemComponent implements OnInit {
   public unlock(): void {
     this.supportRequestService.unlockRecord(this.supportRequest);
   }
-
-  public cancel(): void {
-    this.supportRequest.reset();
-  }
-
-  get canSave(): boolean {
-    return (this.supportRequest !== null && this.supportRequest.isDirty);
-  }
-
-  get isDirty(): boolean {
-    return this.supportRequest.isDirty;
-  }
 }

@@ -37,17 +37,20 @@ export class SupportRequestModel {
         this.title = this.lockManager.wrapField(
             'title',
             () => entity.title,
-            t => entity.title = t
+            t => entity.title = t,
+            () => this.locked
         );
         this.description = this.lockManager.wrapField(
             'description',
             () => entity.description,
-            d => entity.description = d
+            d => entity.description = d,
+            () => this.locked
         )
         this.assignedTo = this.lockManager.wrapField(
             'assignedTo',
             () => entity.assignedTo,
-            a => entity.assignedTo = a
+            a => entity.assignedTo = a,
+            () => this.locked
         );
         this.changeHistory = this.lockManager.wrapList(
             'historyList',

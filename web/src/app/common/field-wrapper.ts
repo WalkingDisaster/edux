@@ -8,7 +8,7 @@ export class FieldWrapper<T> implements WrappedItem, Debouncable {
     private editing = false;
     private originalValue: T;
 
-    public locked = false;
+    private fieldLocked = false;
     public lockedBy = null;
 
     constructor(
@@ -18,19 +18,24 @@ export class FieldWrapper<T> implements WrappedItem, Debouncable {
         , private userName: string
         , public name: string
         , private accessor: () => T
-        , private mutator: (T) => void) {
+        , private mutator: (T) => void
+        , private entityIsLocked: () => boolean) {
 
         this.originalValue = accessor();
 
         socket.on(`editing-${id}-${this.name}`, data => {
-            this.locked = true;
+            this.fieldLocked = true;
             this.lockedBy = data.userName;
         });
         socket.on(`released-${id}-${this.name}`, data => {
-            this.locked = false;
+            this.fieldLocked = false;
             this.lockedBy = null;
             this.mutator(data.value);
         });
+    }
+
+    get locked() {
+        return (this.fieldLocked || this.entityIsLocked());
     }
 
     get value(): T {
