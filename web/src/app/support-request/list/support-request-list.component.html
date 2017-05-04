@@ -1,6 +1,12 @@
-<div>
-  <button (click)="createNew()">New Request</button>
-</div>
+<!--<ul class="items">
+  <li *ngFor="let supportRequest of supportRequests" (click)="onSelect(supportRequest)" [class.selected]="isSelected(supportRequest)">
+    {{supportRequest.title.value}}<span *ngIf="supportRequest.locked" class="lock"> ({{ supportRequest.lockedBy }})</span>
+  </li>
+</ul>
+<router-outlet></router-outlet>-->
+
+
+<button (click)="createNew()" md-icon-button><md-icon>add_circle</md-icon></button>
 <ul class="items">
   <li *ngFor="let supportRequest of supportRequests" (click)="onSelect(supportRequest)" [class.selected]="isSelected(supportRequest)">
     {{supportRequest.title.value}}<span *ngIf="supportRequest.locked" class="lock"> ({{ supportRequest.lockedBy }})</span>

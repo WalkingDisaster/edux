@@ -1,60 +1,60 @@
-<div *ngIf="supportRequest">
-  <h3>"{{ supportRequest.title.value }}"</h3>
-  <div *ngIf="supportRequest.viewers.size > 0; else noViewers">
-    <label>Viewers:</label>
-    <ul>
-      <li *ngFor="let viewer of supportRequest.viewers">{{ viewer }}</li>
-    </ul>
-  </div>
-  <div *ngIf="supportRequest.locked">
-    <span *ngIf="myLock; then showYourLock; else showLockUser"></span>
-    <ng-template #showLockUser><b>locked</b> by {{ supportRequest.lockedBy }}</ng-template>
-    <ng-template #showYourLock><b>You have this locked</b></ng-template>
-  </div>
-  <div>
-    <button [disabled]="!canLockCurrent" (click)="lock()">Lock Record</button>
-    <button *ngIf="myLock" (click)="unlock()">Unlock Record</button>
-  </div>
-  <ng-template #noViewers>
-    <div>No one else is viewing this record.</div>
-  </ng-template>
-  <div>
-    <label>Id: </label>{{ supportRequest.id }}
-  </div>
-  <div>
-    <label>Recorded: </label>{{ supportRequest.recorded }}
-  </div>
-  <div>
-    <label>Recorded By: </label>{{ supportRequest.recordedBy }}
-  </div>
-  <div>
-    <label>Current Status: </label>{{ supportRequest.currentStateString}}
-  </div>
-  <div>
-    <label>Title: </label>
-    <input [disabled]="supportRequest.title.locked" [(ngModel)]="supportRequest.title.value" placeholder="name" />
-    <span *ngIf="supportRequest.title.locked">{{supportRequest.title.lockedBy}}</span>
-  </div>
-  <div>
-    <label>Description: </label>
-    <textarea [disabled]="supportRequest.description.locked" [(ngModel)]="supportRequest.description.value" placeholder="description"></textarea>
-    <span *ngIf="supportRequest.description.locked">{{supportRequest.title.lockedBy}}</span>
-  </div>
-  <div>
-    <label>Assigned To: </label>
-    <input [disabled]="supportRequest.assignedTo.locked" [(ngModel)]="supportRequest.assignedTo.value" placeholder="assignee"
-    />
-    <span *ngIf="supportRequest.assignedTo.locked">{{supportRequest.title.lockedBy}}</span>
-  </div>
-  <div>
-    <label>Resolved On: </label>{{supportRequest.resolvedOn}}
-  </div>
-  <div>
-    <label>Resolved By: </label>{{supportRequest.resolvedBy}}
-  </div>
-  <div>
-    <div *ngFor="let item of supportRequest.changeHistory.items">
-      {{item.changedTo}} by {{item.changedBy}} on {{item.changeTime}}
+<md-card *ngIf="supportRequest">
+  <md-card-header>
+    <div md-card-avatar>
+      <button (click)="unlock()" *ngIf="supportRequest.locked && myLock" class="material-icons md-36" md-icon-button><md-icon>edit</md-icon></button>
+      <button *ngIf="supportRequest.locked && !myLock" class="material-icons md-36" disabled md-icon-button><md-icon>lock_outline</md-icon></button>
+      <button (click)="lock()" *ngIf="!supportRequest.locked" class="material-icons md-36" md-icon-button><md-icon>lock_open</md-icon></button>
     </div>
-  </div>
-</div>
+    <md-card-title>{{ supportRequest.title.value }}</md-card-title>
+    <md-card-subtitle>
+      {{ supportRequest.currentStateString}}
+    </md-card-subtitle>
+    <md-card-subtitle *ngIf="supportRequest.locked; else showUnlocked">
+      <span *ngIf="myLock; then showYourLock; else showLockUser"></span>
+      <ng-template #showLockUser><b>locked</b> by {{ supportRequest.lockedBy }}</ng-template>
+      <ng-template #showYourLock><b>You have this locked</b></ng-template>
+    </md-card-subtitle>
+    <ng-template #showUnlocked>
+      <md-card-subtitle>Unlocked</md-card-subtitle>
+    </ng-template>
+  </md-card-header>
+
+  <md-card-content>
+    <p>Recorded on {{ supportRequest.recorded }} by {{ supportRequest.recordedBy }}</p>
+
+    <div *ngIf="supportRequest.viewers.size > 0; else noViewers">
+      <label>Viewers:</label>
+      <ul>
+        <li *ngFor="let viewer of supportRequest.viewers">{{ viewer }}</li>
+      </ul>
+    </div>
+    <ng-template #noViewers>
+      <div>No one else is viewing this record.</div>
+    </ng-template>
+
+    <md-input-container>
+      <input mdInput [disabled]="supportRequest.title.locked" [(ngModel)]="supportRequest.title.value" placeholder="title" />
+      <md-hint *ngIf="supportRequest.title.locked">{{supportRequest.title.lockedBy}}</md-hint>
+    </md-input-container>
+    <md-input-container>
+      <input mdInput [disabled]="supportRequest.description.locked" [(ngModel)]="supportRequest.description.value" placeholder="description"
+      />
+      <md-hint *ngIf="supportRequest.description.locked">{{supportRequest.description.lockedBy}}</md-hint>
+    </md-input-container>
+    <md-input-container>
+      <input mdInput [disabled]="supportRequest.assignedTo.locked" [(ngModel)]="supportRequest.assignedTo.value" placeholder="assignee"
+      />
+      <md-hint *ngIf="supportRequest.assignedTo.locked">{{supportRequest.assignedTo.lockedBy}}</md-hint>
+    </md-input-container>
+
+  </md-card-content>
+
+  <md-card-footer>
+    <div *ngIf="supportRequest.isResolved">
+      <div>
+        Resolved on {{supportRequest.resolvedOn}} by {{supportRequest.resolvedBy}}
+      </div>
+    </div>
+  </md-card-footer>
+
+</md-card>

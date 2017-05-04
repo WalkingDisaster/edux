@@ -39,7 +39,7 @@ export class SoftLockFieldManager {
     , private userName: string
   ) { }
 
-  public wrapField<T>(name: string, accessor: () => T, mutator: (T) => void, entityLocked: () => boolean): FieldWrapper<T> {
+  public wrapField<T>(name: string, accessor: () => T, mutator: (T) => void, entityLocked: (string) => boolean): FieldWrapper<T> {
     const newField = new FieldWrapper<T>(this.utilityService, this.socket, this.id, this.userName, name, accessor, mutator, entityLocked);
     this.items.set(name, newField);
     return newField;

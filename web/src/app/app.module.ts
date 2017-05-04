@@ -3,8 +3,9 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NotificationBarModule, NotificationBarService } from 'angular2-notification-bar';
+import { NgMaterialModule } from './ng-material/ng-material.module';
 
 import { AppRoutingModule } from './app-routing.module';
 import { ChatRoutingModule } from './chat/chat-routing.module';
@@ -53,7 +54,9 @@ import { SupportRequestItemComponent } from './support-request/item/support-requ
     FormsModule,
     HttpModule,
     BrowserAnimationsModule,
-    NotificationBarModule
+    NoopAnimationsModule,
+    NotificationBarModule,
+    NgMaterialModule
   ],
   providers: [
     EventAggregatorService,

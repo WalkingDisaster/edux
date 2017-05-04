@@ -38,19 +38,19 @@ export class SupportRequestModel {
             'title',
             () => entity.title,
             t => entity.title = t,
-            () => this.locked
+            userName => this.locked && this.lockedBy !== userName
         );
         this.description = this.lockManager.wrapField(
             'description',
             () => entity.description,
             d => entity.description = d,
-            () => this.locked
+            userName => this.locked && this.lockedBy !== userName
         )
         this.assignedTo = this.lockManager.wrapField(
             'assignedTo',
             () => entity.assignedTo,
             a => entity.assignedTo = a,
-            () => this.locked
+            userName => this.locked && this.lockedBy !== userName
         );
         this.changeHistory = this.lockManager.wrapList(
             'historyList',
@@ -113,6 +113,10 @@ export class SupportRequestModel {
             const toAdd = new SupportRequestStateHistoryItem(now, currentUser, newState, comments);
             this.changeHistory.addItem(toAdd);
         }
+    }
+
+    get isResolved(): boolean {
+        return this.resolvedOn !== null;
     }
 
     get canChangeState(): boolean {

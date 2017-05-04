@@ -19,7 +19,7 @@ export class FieldWrapper<T> implements WrappedItem, Debouncable {
         , public name: string
         , private accessor: () => T
         , private mutator: (T) => void
-        , private entityIsLocked: () => boolean) {
+        , private entityIsLocked: (string) => boolean) {
 
         this.originalValue = accessor();
 
@@ -35,7 +35,7 @@ export class FieldWrapper<T> implements WrappedItem, Debouncable {
     }
 
     get locked() {
-        return (this.fieldLocked || this.entityIsLocked());
+        return (this.fieldLocked || this.entityIsLocked(this.userName));
     }
 
     get value(): T {
