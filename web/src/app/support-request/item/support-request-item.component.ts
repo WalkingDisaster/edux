@@ -39,10 +39,33 @@ export class SupportRequestItemComponent implements OnInit {
         return;
       }
       if (event instanceof NavigationStart && event.url.substring(0, 9) === '/support/') {
+        this.supportRequestService.unlockRecord(this.supportRequest);
         this.supportRequestService.stopViewing(this.supportRequest.id, this.userService.getUserName());
         this.supportRequest = null;
       }
     });
+  }
+
+  public lock(): void {
+    this.supportRequestService.lockRecord(this.supportRequest);
+  }
+
+  get canLockCurrent(): boolean {
+    if (!this.supportRequest) {
+      return false;
+    }
+    return !this.supportRequest.locked;
+  }
+
+  get myLock(): boolean {
+    if (!this.supportRequest || !this.supportRequest.locked) {
+      return false;
+    }
+    return (this.supportRequest.lockedBy === this.userService.getUserName());
+  }
+
+  public unlock(): void {
+    this.supportRequestService.unlockRecord(this.supportRequest);
   }
 
   public cancel(): void {

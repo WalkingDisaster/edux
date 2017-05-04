@@ -120,6 +120,37 @@ exports.init = function (io) {
             })
         })
 
+        socket.on('lock', function (data) {
+            var id = data.id;
+            var userName = data.userName;
+
+            var entity = items.find((item) => {
+                return item.id === id;
+            });
+            entity.locked = true;
+            entity.lockedBy = userName;
+
+            socket.nsp.emit('locked', {
+                id: id,
+                userName: userName
+            });
+        });
+
+        socket.on('unlock', function (data) {
+            var id = data.id;
+            var userName = data.userName;
+
+            var entity = items.find((item) => {
+                return item.id === id;
+            });
+            entity.locked = false;
+            entity.lockedBy = null;
+
+            socket.nsp.emit('unlocked', {
+                id: id
+            });
+        });
+
         socket.on('new', function (data, fn) {
             var userName = data.userName;
 

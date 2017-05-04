@@ -51,6 +51,25 @@ export class SupportRequestService {
       }
       found.viewers.delete(userName);
     });
+    this.socket.on('locked', data => {
+      const id = data.id;
+      const userName = data.userName;
+      const found = this.models.find(model => model.id === id);
+      if (!found) {
+        return;
+      }
+      found.locked = true;
+      found.lockedBy = userName;
+    });
+    this.socket.on('unlocked', data => {
+      const id = data.id;
+      const found = this.models.find(model => model.id === id);
+      if (!found) {
+        return;
+      }
+      found.locked = false;
+      found.lockedBy = null;
+    });
   }
 
   public requestUpdate() {
@@ -71,6 +90,14 @@ export class SupportRequestService {
       id: id,
       userName: userName
     });
+  }
+
+  public lockRecord(model: SupportRequestModel): void {
+    this.socket.emit('lock', { id: model.id, userName: this.userService.getUserName() });
+  }
+
+  public unlockRecord(model: SupportRequestModel): void {
+    this.socket.emit('unlock', { id: model.id });
   }
 
   public getSupportRequest(id: number): Promise<SupportRequestModel> {

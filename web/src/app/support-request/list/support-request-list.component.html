@@ -3,7 +3,7 @@
 </div>
 <ul class="items">
   <li *ngFor="let supportRequest of supportRequests" (click)="onSelect(supportRequest)" [class.selected]="isSelected(supportRequest)">
-    {{supportRequest.title.value}}
+    {{supportRequest.title.value}}<span *ngIf="supportRequest.locked" class="lock"> ({{ supportRequest.lockedBy }})</span>
   </li>
 </ul>
 

@@ -6,6 +6,13 @@
       <li *ngFor="let viewer of supportRequest.viewers">{{ viewer }}</li>
     </ul>
   </div>
+  <div *ngIf="supportRequest.locked">
+    <b>locked</b> by {{ supportRequest.lockedBy }}
+  </div>
+  <div>
+    <button [disabled]="!canLockCurrent" (click)="lock()">Lock Record</button>
+    <button *ngIf="myLock" (click)="unlock()">Unlock Record</button>
+  </div>
   <ng-template #noViewers>
     <div>No one else is viewing this record.</div>
   </ng-template>
