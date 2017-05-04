@@ -3,3 +3,7 @@ span.link {
   cursor: pointer;
   text-decoration: underline;
 }
+
+h1 {
+  color: blue
+}

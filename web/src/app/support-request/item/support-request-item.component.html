@@ -14,15 +14,19 @@
   </div>
   <div>
     <label>Title: </label>
-    <input [disabled]="supportRequest.title.locked" [(ngModel)]="supportRequest.title.value" placeholder="name" /><span *ngIf="supportRequest.title.locked">{{supportRequest.title.lockedBy}}</span>
+    <input [disabled]="supportRequest.title.locked" [(ngModel)]="supportRequest.title.value" placeholder="name" />
+    <span *ngIf="supportRequest.title.locked">{{supportRequest.title.lockedBy}}</span>
   </div>
   <div>
     <label>Description: </label>
-    <textarea [(ngModel)]="supportRequest.description.value" placeholder="description"></textarea>
+    <textarea [disabled]="supportRequest.description.locked" [(ngModel)]="supportRequest.description.value" placeholder="description"></textarea>
+    <span *ngIf="supportRequest.description.locked">{{supportRequest.title.lockedBy}}</span>
   </div>
   <div>
     <label>Assigned To: </label>
-    <input [(ngModel)]="supportRequest.assignedTo.value" placeholder="assignee" />
+    <input [disabled]="supportRequest.assignedTo.locked" [(ngModel)]="supportRequest.assignedTo.value" placeholder="assignee"
+    />
+    <span *ngIf="supportRequest.assignedTo.locked">{{supportRequest.title.lockedBy}}</span>
   </div>
   <div>
     <label>Resolved On: </label>{{supportRequest.resolvedOn}}

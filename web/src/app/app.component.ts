@@ -12,7 +12,7 @@ import { NotificationService } from './notification/notification.service';
 export class AppComponent implements OnInit {
 
   public pendingNotifications = 0;
-  public title = 'Thingzes';
+  public title = 'Stir Trek 2017';
   public userMessage: string;
   public loggedIn: boolean;
 
