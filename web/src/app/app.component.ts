@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { UserService } from './common/user.service';
 import { NotificationService } from './notification/notification.service';
+import { EventAggregatorService } from './common/event-aggregator.service';
 
 @Component({
   selector: 'app-root',
@@ -17,15 +18,16 @@ export class AppComponent implements OnInit {
   public loggedIn: boolean;
 
   constructor(
-    private userService: UserService
+    private eventAggregator: EventAggregatorService
+    , private userService: UserService
     , private router: Router
     , private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
     this.notificationService.notificationCount.subscribe(count => this.pendingNotifications = count);
-    this.userService.loginSubject.subscribe(userName => this.onLoggedIn(userName));
-    this.userService.logoutSubject.subscribe(() => this.onLoggedOut());
+    this.eventAggregator.userLoginEvents.forEach(userName => this.onLoggedIn(userName));
+    this.eventAggregator.userLogoutEvents.forEach(() => this.onLoggedOut());
     this.userService.notification.subscribe(data => {
       this.notificationService.push(data);
     });

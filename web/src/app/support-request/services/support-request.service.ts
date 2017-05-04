@@ -3,7 +3,12 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
-import { SupportRequest, SupportRequestStateHistoryItem } from '../entities/support-request';
+import { SupportRequest } from '../entities/support-request';
+import { SupportRequestModel } from '../models/support-request-model';
+
+import { EventAggregatorService } from '../../common/event-aggregator.service';
+
+import { SoftLockFieldService } from '../../common/soft-lock-field.service';
 import { SocketService } from '../../common/socket.service';
 import { UserService } from '../../common/user.service';
 
@@ -11,47 +16,66 @@ import { UserService } from '../../common/user.service';
 export class SupportRequestService {
 
   private socket: SocketIOClient.Socket;
-  private supportRequestSubject = new Subject<SupportRequest>();
+  private models = new Array<SupportRequestModel>();
+  private supportRequestSubject = new Subject<SupportRequestModel>();
 
   constructor(
-    private socketService: SocketService
+    private eventAggregator: EventAggregatorService
+    , private lockService: SoftLockFieldService
+    , private socketService: SocketService
     , private userService: UserService
   ) {
+    this.eventAggregator.userLogoutEvents.forEach(() => this.models = new Array<SupportRequestModel>());
     this.socket = socketService.connect('support');
     this.socket.on('nextItem', (data: SupportRequest) => {
-      this.supportRequestSubject.next(data);
+      this.addModel(data);
     });
   }
 
   public requestUpdate() {
+    this.models = new Array<SupportRequestModel>();
     this.socket.emit('get', { id: null });
   }
 
-  public getSupportRequest(id: number): Promise<SupportRequest> {
+  public getSupportRequest(id: number): Promise<SupportRequestModel> {
     return new Promise((resolve, reject) => {
-      this.socket.on('get-one-' + id, (data: SupportRequest) => {
-        resolve(data);
-      })
-      this.socket.emit('get-one', { id: id });
+      const result = this.models.find(other => other.id === id);
+      if (!result) {
+        this.socket.emit('find', { id: id }, (data: SupportRequest) => {
+          const model = this.addModel(data);
+          resolve(model);
+        });
+      } else {
+        resolve(result);
+      }
     });
   }
 
-  get supportRequestEntities(): Observable<SupportRequest> {
+  get supportRequestModels(): Observable<SupportRequestModel> {
     return this.supportRequestSubject;
   }
 
-  public createNew(): Promise<SupportRequest> {
+  public createNew(): Promise<SupportRequestModel> {
     const currentUser = this.userService.getUserName();
-    return new Promise<SupportRequest>(resolve => {
+    return new Promise<SupportRequestModel>(resolve => {
       const now = new Date();
-      const collationId = `${this.socket.id}-${now.getUTCMilliseconds()}`;
-      this.socket.on(`new-${collationId}`, (data: SupportRequest) => {
-        resolve(data);
-      });
       this.socket.emit('new', {
-        userName: currentUser,
-        collationId: collationId
+        userName: currentUser
+      }, data => {
+        const model = this.addModel(data);
+        resolve(model);
       });
     });
+  }
+
+  private addModel(entity: SupportRequest): SupportRequestModel {
+    const existing = this.models.find(m => m.id == entity.id);
+    if (!existing) {
+      const model = new SupportRequestModel(this.lockService, this.userService, entity);
+      this.models.push(model);
+      this.supportRequestSubject.next(model);
+      return model;
+    }
+    return existing;
   }
 }

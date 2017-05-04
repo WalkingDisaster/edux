@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
 import { SocketService } from './socket.service';
+import { EventAggregatorService } from './event-aggregator.service';
 
 import { NotificationDto } from '../dtos/notification-dto';
 import { Notification } from '../models/notification';
@@ -15,11 +16,12 @@ export class UserService {
   private socket: SocketIOClient.Socket;
 
   public redirectUrl: string;
-  public loginSubject = new Subject<string>();
-  public logoutSubject = new Subject<void>();
   public notification = new Subject<Notification>();
 
-  constructor(private socketService: SocketService) {
+  constructor(
+    private eventAggregator: EventAggregatorService
+    , private socketService: SocketService
+  ) {
     this.initSocket(this.socketService.connect());
   }
 
@@ -60,13 +62,13 @@ export class UserService {
       userName: userName,
       token: token
     });
-    this.loginSubject.next(userName);
+    this.eventAggregator.onLogin(userName);
   }
 
   public logout(): void {
     localStorage.removeItem(UserService.USER_NAME_KEY);
     this.socket.emit('logout');
-    this.logoutSubject.next();
+    this.eventAggregator.onLogout();
   }
 
   public isLoggedIn(): boolean {

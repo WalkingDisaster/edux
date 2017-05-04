@@ -37,12 +37,29 @@ exports.init = function (io) {
             }
         });
 
-        socket.on('get-one', function (data) {
+        socket.on('viewing', function (data) {
+            var id = data.id;
+            var userName = data.userName;
+            socket.broadcast.emit('view-start', {
+                id: id,
+                userName: userName
+            })
+        });
+        socket.on('stopped viewing', function (data) {
+            var id = data.id;
+            var userName = data.userName;
+            socket.broadcast.emit('view-end', {
+                id: id,
+                userName: userName
+            })
+        });
+
+        socket.on('find', function (data, fn) {
             var id = data.id;
             var found = items.find((item, index) => {
                 return item.id === id;
             })
-            socket.emit('get-one-' + id, found);
+            fn(found);
         });
 
         socket.on('editing', function (data) {
@@ -59,15 +76,22 @@ exports.init = function (io) {
             var userName = data.userName;
             var fieldName = data.fieldName;
             var newValue = data.value;
+
+            var entity = items.find((item) => {
+                return item.id === id;
+            });
+            if (!entity) {
+                return;
+            }
+            entity[fieldName] = newValue;
             socket.broadcast.emit(`released-${id}-${fieldName}`, {
                 userName: userName,
                 value: newValue
             })
         })
 
-        socket.on('new', function (data) {
+        socket.on('new', function (data, fn) {
             var userName = data.userName;
-            var collationId = data.collationId;
 
             var newItem = {
                 id: ++lastId,
@@ -83,8 +107,9 @@ exports.init = function (io) {
                     comments: 'Created'
                 }]
             };
+            items.push(newItem);
             socket.broadcast.emit('nextItem', newItem);
-            socket.emit(`new-${collationId}`, newItem);
+            fn(newItem);
         })
     });
 }

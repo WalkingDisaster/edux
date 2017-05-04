@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { NotificationBarModule, NotificationBarService } from 'angular2-notification-bar';
 
@@ -17,6 +18,7 @@ import { HomeComponent } from './home/home.component';
 import { ChatComponent } from './chat/chat.component';
 import { LoginComponent } from './login/login.component';
 
+import { EventAggregatorService } from './common/event-aggregator.service';
 import { SoftLockFieldService } from './common/soft-lock-field.service';
 import { SocketService } from './common/socket.service';
 import { ChatService } from './chat/chat.service';
@@ -50,9 +52,11 @@ import { SupportRequestItemComponent } from './support-request/item/support-requ
     BrowserModule,
     FormsModule,
     HttpModule,
+    BrowserAnimationsModule,
     NotificationBarModule
   ],
   providers: [
+    EventAggregatorService,
     SoftLockFieldService,
     SocketService,
     ChatService,

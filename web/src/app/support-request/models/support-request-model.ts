@@ -15,6 +15,7 @@ export class SupportRequestModel {
     public description: FieldWrapper<string>;
     public assignedTo: FieldWrapper<string>;
     public changeHistory: ListWrapper<SupportRequestStateHistoryItem>;
+    public viewing = new Set<string>();
 
     constructor(
         private lockService: SoftLockFieldService

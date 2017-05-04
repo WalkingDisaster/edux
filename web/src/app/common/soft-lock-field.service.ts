@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { UtilityService } from '../common/utility.service';
 import { SocketService } from '../common/socket.service';
 import { UserService } from '../common/user.service';
+import { EventAggregatorService } from '../common/event-aggregator.service';
 
 import { FieldWrapper } from './field-wrapper';
 import { ListWrapper } from './list-wrapper';
@@ -14,10 +15,12 @@ export class SoftLockFieldService {
   private socket: SocketIOClient.Socket;
 
   constructor(
-    private userService: UserService
+    private eventAggregator: EventAggregatorService
+    , private userService: UserService
     , private utilityService: UtilityService
     , private socketService: SocketService
   ) {
+    this.eventAggregator.userLoginEvents.forEach(userName => this.userName = userName);
     this.userName = userService.getUserName();
   }
 

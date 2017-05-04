@@ -2,8 +2,6 @@ import { WrappedItem } from './wrapped-item';
 
 import { Debouncable, UtilityService } from '../common/utility.service';
 
-
-
 export class FieldWrapper<T> implements WrappedItem, Debouncable {
     timeoutId: number;
 

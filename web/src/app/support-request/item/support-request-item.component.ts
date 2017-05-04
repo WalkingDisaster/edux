@@ -16,6 +16,7 @@ export class SupportRequestItemComponent implements OnInit {
   @HostBinding('style.display') display = 'block';
   @HostBinding('style.position') position = 'absolute';
 
+  private currentId: number;
   public supportRequest: SupportRequestModel;
 
   constructor(
@@ -29,8 +30,9 @@ export class SupportRequestItemComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe((params: Params) => {
       const id: number = +params['id'];
-      this.supportRequestService.getSupportRequest(id).then(entity => {
-        this.supportRequest = new SupportRequestModel(this.lockService, this.userService, entity);
+      this.currentId = id;
+      this.supportRequestService.getSupportRequest(id).then(model => {
+        this.supportRequest = model;
       });
     });
   }
@@ -45,12 +47,5 @@ export class SupportRequestItemComponent implements OnInit {
 
   get isDirty(): boolean {
     return this.supportRequest.isDirty;
-  }
-
-  public createNew(): void {
-    this.supportRequestService.createNew()
-      .then(newItem => {
-
-      });
   }
 }
