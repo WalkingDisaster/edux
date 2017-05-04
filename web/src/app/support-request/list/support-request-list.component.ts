@@ -4,7 +4,6 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
-import { SupportRequest } from '../entities/support-request';
 import { SupportRequestModel } from '../models/support-request-model';
 
 import { EventAggregatorService } from '../../common/event-aggregator.service';
@@ -32,7 +31,7 @@ export class SupportRequestListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.eventAggregator.userLogoutEvents.forEach(() => {
+    this.eventAggregator.userLogingOutEvent.forEach(userName => {
       this.supportRequests = new Array<SupportRequestModel>();
     });
     this.supportRequests = new Array<SupportRequestModel>();

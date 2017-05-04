@@ -12,7 +12,10 @@ exports.init = function (io) {
                 changedBy: 'WalkingDisaster',
                 changedTo: 'Identified',
                 comments: null
-            }]
+            }],
+            viewers: new Set(),
+            locked: false,
+            lockedBy: null
         },
         {
             id: ++lastId,
@@ -26,21 +29,39 @@ exports.init = function (io) {
                 changedBy: 'WalkingDisaster',
                 changedTo: 'Identified',
                 comments: "Don't like it much"
-            }]
+            }],
+            viewers: new Set(),
+            locked: false,
+            lockedBy: null
         }
     ];
 
     io.of('/support').on('connection', function (socket) {
+        var getDto = function (item) {
+            return {
+                item: item,
+                viewers: Array.from(item.viewers),
+                locked: item.locked,
+                lockedBy: item.lockedBy
+            };
+        };
+        socket.on('disconnect', function (socket) {});
+
         socket.on('get', function () {
             for (var i = 0; i < items.length; i++) {
-                socket.emit('nextItem', items[i]);
+                var dto = getDto(items[i]);
+                socket.emit('nextItem', dto);
             }
         });
 
         socket.on('viewing', function (data) {
             var id = data.id;
             var userName = data.userName;
-            socket.broadcast.emit('view-start', {
+            var found = items.find(item => item.id === id);
+            if (!found.viewers.has(userName)) {
+                found.viewers.add(userName)
+            }
+            socket.nsp.emit('view-start', {
                 id: id,
                 userName: userName
             })
@@ -48,10 +69,18 @@ exports.init = function (io) {
         socket.on('stopped viewing', function (data) {
             var id = data.id;
             var userName = data.userName;
-            socket.broadcast.emit('view-end', {
-                id: id,
-                userName: userName
-            })
+            var filtered = items.filter(item => id === null || item.id === id);
+
+            for (var i = 0; i < filtered.length; i++) {
+                var item = filtered[i];
+                if (item.viewers.has(userName)) {
+                    item.viewers.delete(userName)
+                    socket.nsp.emit('view-end', {
+                        id: item.id,
+                        userName: userName
+                    });
+                }
+            }
         });
 
         socket.on('find', function (data, fn) {
@@ -59,7 +88,8 @@ exports.init = function (io) {
             var found = items.find((item, index) => {
                 return item.id === id;
             })
-            fn(found);
+            var dto = getDto(found);
+            fn(dto);
         });
 
         socket.on('editing', function (data) {
@@ -105,11 +135,15 @@ exports.init = function (io) {
                     changedBy: userName,
                     changedTo: 'Identified',
                     comments: 'Created'
-                }]
+                }],
+                viewers: new Set(),
+                locked: false,
+                lockedBy: null
             };
             items.push(newItem);
-            socket.broadcast.emit('nextItem', newItem);
-            fn(newItem);
+            var dto = getDto(newItem);
+            socket.broadcast.emit('nextItem', dto);
+            fn(dto);
         })
     });
 }

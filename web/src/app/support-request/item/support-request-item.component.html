@@ -1,5 +1,14 @@
 <div *ngIf="supportRequest">
   <h3>"{{ supportRequest.title.value }}"</h3>
+  <div *ngIf="supportRequest.viewers.size > 0; else noViewers">
+    <label>Viewers:</label>
+    <ul>
+      <li *ngFor="let viewer of supportRequest.viewers">{{ viewer }}</li>
+    </ul>
+  </div>
+  <ng-template #noViewers>
+    <div>No one else is viewing this record.</div>
+  </ng-template>
   <div>
     <label>Id: </label>{{ supportRequest.id }}
   </div>

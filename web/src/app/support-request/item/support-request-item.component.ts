@@ -1,5 +1,5 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
-import { ActivatedRoute, Router, Params } from '@angular/router';
+import { ActivatedRoute, Router, Params, NavigationStart } from '@angular/router';
 
 import { SoftLockFieldService } from '../../common/soft-lock-field.service';
 import { SupportRequestService } from '../services/support-request.service';
@@ -16,7 +16,6 @@ export class SupportRequestItemComponent implements OnInit {
   @HostBinding('style.display') display = 'block';
   @HostBinding('style.position') position = 'absolute';
 
-  private currentId: number;
   public supportRequest: SupportRequestModel;
 
   constructor(
@@ -30,10 +29,19 @@ export class SupportRequestItemComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe((params: Params) => {
       const id: number = +params['id'];
-      this.currentId = id;
       this.supportRequestService.getSupportRequest(id).then(model => {
+        this.supportRequestService.startViewing(model);
         this.supportRequest = model;
       });
+    });
+    this.router.events.forEach(event => {
+      if (!this.supportRequest) {
+        return;
+      }
+      if (event instanceof NavigationStart && event.url.substring(0, 9) === '/support/') {
+        this.supportRequestService.stopViewing(this.supportRequest.id, this.userService.getUserName());
+        this.supportRequest = null;
+      }
     });
   }
 

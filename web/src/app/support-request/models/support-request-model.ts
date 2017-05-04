@@ -15,13 +15,18 @@ export class SupportRequestModel {
     public description: FieldWrapper<string>;
     public assignedTo: FieldWrapper<string>;
     public changeHistory: ListWrapper<SupportRequestStateHistoryItem>;
-    public viewing = new Set<string>();
 
     constructor(
         private lockService: SoftLockFieldService
         , private userService: UserService
-        , private entity?: SupportRequest
+        , private entity: SupportRequest
+        , public viewers: Set<string>
+        , public locked: boolean
+        , public lockedBy: string
     ) {
+        if (this.viewers === null) {
+            this.viewers = new Set<string>();
+        }
         if (entity === null) {
             this.entity = new SupportRequest();
             this.entity.changeHistory = [

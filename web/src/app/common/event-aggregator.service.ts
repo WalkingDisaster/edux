@@ -7,20 +7,20 @@ import { Observable } from 'rxjs/Observable';
 @Injectable()
 export class EventAggregatorService {
 
-  private userLogout = new Subject<void>();
+  private userLogout = new Subject<string>();
   private userLogin = new Subject<string>();
 
   constructor() { }
 
-  get userLogoutEvents(): Observable<void> {
+  get userLogingOutEvent(): Observable<string> {
     return this.userLogout;
   }
   get userLoginEvents(): Observable<string> {
     return this.userLogin;
   }
 
-  public onLogout(): void {
-    this.userLogout.next();
+  public onLoggingOut(userName: string): void {
+    this.userLogout.next(userName);
   }
 
   public onLogin(userName: string): void {

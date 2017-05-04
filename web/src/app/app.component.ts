@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.notificationService.notificationCount.subscribe(count => this.pendingNotifications = count);
     this.eventAggregator.userLoginEvents.forEach(userName => this.onLoggedIn(userName));
-    this.eventAggregator.userLogoutEvents.forEach(() => this.onLoggedOut());
+    this.eventAggregator.userLogingOutEvent.forEach(userName => this.onLoggedOut());
     this.userService.notification.subscribe(data => {
       this.notificationService.push(data);
     });

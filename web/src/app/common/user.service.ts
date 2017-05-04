@@ -66,9 +66,10 @@ export class UserService {
   }
 
   public logout(): void {
+    const userName = localStorage.getItem(UserService.USER_NAME_KEY);
     localStorage.removeItem(UserService.USER_NAME_KEY);
+    this.eventAggregator.onLoggingOut(userName);
     this.socket.emit('logout');
-    this.eventAggregator.onLogout();
   }
 
   public isLoggedIn(): boolean {

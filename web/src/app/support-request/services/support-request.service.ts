@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
-import { SupportRequest } from '../entities/support-request';
+import { SupportRequestDto } from '../dtos/support-request-dto';
 import { SupportRequestModel } from '../models/support-request-model';
 
 import { EventAggregatorService } from '../../common/event-aggregator.service';
@@ -25,10 +25,31 @@ export class SupportRequestService {
     , private socketService: SocketService
     , private userService: UserService
   ) {
-    this.eventAggregator.userLogoutEvents.forEach(() => this.models = new Array<SupportRequestModel>());
+    this.eventAggregator.userLogingOutEvent.forEach(userName => {
+      this.models = new Array<SupportRequestModel>();
+      this.stopViewing(null, userName);
+    });
     this.socket = socketService.connect('support');
-    this.socket.on('nextItem', (data: SupportRequest) => {
+    this.socket.on('nextItem', (data: SupportRequestDto) => {
       this.addModel(data);
+    });
+    this.socket.on('view-start', (data) => {
+      const id = data.id;
+      const userName = data.userName;
+      const found = this.models.find(model => model.id === id);
+      if (!found || found.viewers.has(userName)) {
+        return;
+      }
+      found.viewers.add(userName);
+    });
+    this.socket.on('view-end', (data) => {
+      const id = data.id;
+      const userName = data.userName;
+      const found = this.models.find(model => model.id === id);
+      if (!found || !found.viewers.has(userName)) {
+        return;
+      }
+      found.viewers.delete(userName);
     });
   }
 
@@ -37,11 +58,26 @@ export class SupportRequestService {
     this.socket.emit('get', { id: null });
   }
 
+  public startViewing(model: SupportRequestModel): void {
+    const userName = this.userService.getUserName();
+    this.socket.emit('viewing', {
+      id: model.id,
+      userName: userName
+    });
+  }
+
+  public stopViewing(id: number, userName: string): void {
+    this.socket.emit('stopped viewing', {
+      id: id,
+      userName: userName
+    });
+  }
+
   public getSupportRequest(id: number): Promise<SupportRequestModel> {
     return new Promise((resolve, reject) => {
       const result = this.models.find(other => other.id === id);
       if (!result) {
-        this.socket.emit('find', { id: id }, (data: SupportRequest) => {
+        this.socket.emit('find', { id: id }, (data: SupportRequestDto) => {
           const model = this.addModel(data);
           resolve(model);
         });
@@ -68,10 +104,17 @@ export class SupportRequestService {
     });
   }
 
-  private addModel(entity: SupportRequest): SupportRequestModel {
-    const existing = this.models.find(m => m.id == entity.id);
+  private addModel(dto: SupportRequestDto): SupportRequestModel {
+    const entity = dto.item;
+    const existing = this.models.find(m => m.id === entity.id);
     if (!existing) {
-      const model = new SupportRequestModel(this.lockService, this.userService, entity);
+      const model = new SupportRequestModel(
+        this.lockService,
+        this.userService,
+        entity,
+        new Set<string>(dto.viewers),
+        dto.locked,
+        dto.lockedBy);
       this.models.push(model);
       this.supportRequestSubject.next(model);
       return model;
