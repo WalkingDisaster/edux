@@ -1,8 +1,6 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 
-import { slideInDownAnimation } from '../../common/animations';
-
 import { SoftLockFieldService } from '../../common/soft-lock-field.service';
 import { SupportRequestService } from '../services/support-request.service';
 import { UserService } from '../../common/user.service';
@@ -12,11 +10,9 @@ import { SupportRequestModel } from '../models/support-request-model';
 @Component({
   selector: 'app-support-request-item',
   templateUrl: './support-request-item.component.html',
-  styleUrls: ['./support-request-item.component.css'],
-  animations: [slideInDownAnimation]
+  styleUrls: ['./support-request-item.component.css']
 })
 export class SupportRequestItemComponent implements OnInit {
-  @HostBinding('@routeAnimation') routeAnimation = true;
   @HostBinding('style.display') display = 'block';
   @HostBinding('style.position') position = 'absolute';
 
@@ -49,5 +45,12 @@ export class SupportRequestItemComponent implements OnInit {
 
   get isDirty(): boolean {
     return this.supportRequest.isDirty;
+  }
+
+  public createNew(): void {
+    this.supportRequestService.createNew()
+      .then(newItem => {
+
+      });
   }
 }

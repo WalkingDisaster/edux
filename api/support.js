@@ -64,5 +64,27 @@ exports.init = function (io) {
                 value: newValue
             })
         })
+
+        socket.on('new', function (data) {
+            var userName = data.userName;
+            var collationId = data.collationId;
+
+            var newItem = {
+                id: ++lastId,
+                recorded: new Date(),
+                recordedBy: userName,
+                title: null,
+                description: null,
+                assignedTo: null,
+                changeHistory: [{
+                    changeTime: new Date(),
+                    changedBy: userName,
+                    changedTo: 'Identified',
+                    comments: 'Created'
+                }]
+            };
+            socket.broadcast.emit('nextItem', newItem);
+            socket.emit(`new-${collationId}`, newItem);
+        })
     });
 }
