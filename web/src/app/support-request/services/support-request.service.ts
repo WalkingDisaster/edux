@@ -54,7 +54,8 @@ export class SupportRequestService {
     this.socket.on('locked', data => {
       const id = data.id;
       const userName = data.userName;
-      const found = this.models.find(model => model.id === id);
+      const found = this.models
+        .find(model => model.id === id);
       if (!found) {
         return;
       }

@@ -7,6 +7,7 @@ import { UserService } from '../common/user.service';
 import { UtilityService, Debouncable } from '../common/utility.service';
 
 import { UserChangeEvent, UserChangeType } from '../events/user-change-event';
+import { MessageEvent } from '../events/message-event';
 
 import { ChatMessageDto } from '../dtos/chat-message-dto';
 
@@ -95,11 +96,11 @@ export class ChatComponent implements OnInit, Debouncable {
     console.log('Service ended user stream.');
   }
 
-  private handleMessage(message: ChatMessageDto): void {
-    this.messages.push(new ChatMessage(message.userName, message.message));
+  private handleMessage(message: MessageEvent): void {
+    this.messages.push(new ChatMessage(message.userName, message.message, message.myMessage));
   }
   private handleMessageError(error): void {
-    this.messages.push(new ChatMessage('error', 'error'));
+    this.messages.push(new ChatMessage('error', 'error', false));
   }
   private noMoreMessages(): void {
     console.log('Service ended message stream.');

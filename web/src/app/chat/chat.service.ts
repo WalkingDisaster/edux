@@ -79,7 +79,7 @@ export class ChatService {
     }
 
     private messageReceived(messageDto: ChatMessageDto): void {
-        this.messageSubject.next(new MessageEvent(messageDto.userName, messageDto.message));
+        this.messageSubject.next(new MessageEvent(messageDto.userName, messageDto.message, false));
     }
 
     private userIsTyping(user: UserDto): void {
@@ -115,7 +115,7 @@ export class ChatService {
     }
 
     public sendMessage(message: string): void {
-        this.messageSubject.next(new MessageEvent(this.currentUser, message));
+        this.messageSubject.next(new MessageEvent(this.currentUser, message, true));
         this.socket.emit('new message', message);
     }
 

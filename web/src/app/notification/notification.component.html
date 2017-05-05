@@ -1,8 +1,21 @@
-<div>
-  <div>Here are your notficiations</div>
-  <div><button (click)="clearAllNotifications()">Get rid of these</button></div>
-  <ul *ngIf="notifications.length > 0">
-    <li *ngFor="let notification of notifications">{{notification.message}}</li>
-  </ul>
-  <div *ngIf="notifications.length == 0">You're all caught up!</div>
-</div>
+<md-card class="notifications-card">
+  <md-card-header>
+    <md-card-title>Notifications</md-card-title>
+  </md-card-header>
+
+  <md-card-content class="notification-content">
+    <span *ngIf="notifications.length === 0; then showEmpty; else showNotifications"></span>
+    <ng-template #showNotifications>
+      <md-list>
+        <md-list-item *ngFor="let notification of notifications">{{notification.message}}</md-list-item>
+      </md-list>
+    </ng-template>
+    <ng-template #showEmpty>
+      <p>You're all caught up!</p>
+    </ng-template>
+  </md-card-content>
+
+  <md-card-actions>
+    <button (click)="clearAllNotifications()" md-button>Clear Notifications</button>
+  </md-card-actions>
+</md-card>

@@ -31,12 +31,7 @@ export class UserService {
   }
 
   private subscribeEvents(socket: SocketIOClient.Socket): void {
-    // login
-    // logout
     socket
-      .on('token acquired', token => {
-        localStorage.setItem(UserService.TOKEN, token);
-      })
       .on('connect', () => {
         if (this.isLoggedIn()) {
           const userName = this.getUserName();
@@ -45,6 +40,9 @@ export class UserService {
             token: localStorage.getItem(UserService.TOKEN)
           });
         }
+      })
+      .on('token acquired', token => {
+        localStorage.setItem(UserService.TOKEN, token);
       })
       .on('notify', (data: NotificationDto) => {
         this.notification.next(data);

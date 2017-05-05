@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { NotificationBarService, NotificationType } from 'angular2-notification-bar';
 
@@ -16,9 +17,14 @@ export class HomeComponent implements OnInit {
     private userService: UserService
     , private notificationBarService: NotificationBarService
     , private socketService: SocketService
+    , private router: Router
   ) { }
 
   ngOnInit() {
+  }
+
+  public routeToChat(): void {
+    this.router.navigateByUrl('/chat');
   }
 
   public doSomethingThatTakesALongTime(): void {

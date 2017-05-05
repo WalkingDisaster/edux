@@ -26,11 +26,11 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.notificationService.notificationCount.subscribe(count => this.pendingNotifications = count);
-    this.eventAggregator.userLoginEvents.forEach(userName => this.onLoggedIn(userName));
-    this.eventAggregator.userLogingOutEvent.forEach(userName => this.onLoggedOut());
     this.userService.notification.subscribe(data => {
       this.notificationService.push(data);
     });
+    this.eventAggregator.userLoginEvents.forEach(userName => this.onLoggedIn(userName));
+    this.eventAggregator.userLogingOutEvent.forEach(userName => this.onLoggedOut());
     this.loggedIn = this.userService.isLoggedIn();
     if (this.loggedIn) { this.onLoggedIn(this.userService.getUserName()); } else { this.onLoggedOut(); }
   }

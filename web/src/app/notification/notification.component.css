@@ -1,0 +1,8 @@
+.notifications-card {
+  width: 400px;
+}
+
+.notification-content {
+  height: 400px;
+  overflow: auto
+}

@@ -92,7 +92,7 @@ exports.notifyOthers = function (io, userName, message, logins) {
         return;
     }
     var socket = logins.get(userName).socket;
-    socket.broadcast('notify', {
+    socket.broadcast.emit('notify', {
         message: message
     });
 }

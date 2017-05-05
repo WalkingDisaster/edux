@@ -1,8 +1,10 @@
-<div>
-  <ul>
-    <li><a routerLink="/chat">Obligatory Chat Demo</a></li>
-  </ul>
-</div>
-<div>
-  <button (click)="doSomethingThatTakesALongTime()">This may take a while</button>
-</div>
+<md-card class="home-card">
+  <md-card-header>
+    <md-card-title>Event-Driven UI (to the max)</md-card-title>
+  </md-card-header>
+
+  <md-card-content>
+    <button (click)="routeToChat()" md-icon-button><md-icon>chat</md-icon></button>
+    <button (click)="doSomethingThatTakesALongTime()" md-icon-button><md-icon>hourglass_empty</md-icon></button>
+  </md-card-content>
+</md-card>

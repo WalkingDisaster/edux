@@ -1,4 +1,26 @@
-span.sender {
+.other-user {
   color: red;
   font-weight: bold;
+}
+
+.current-user {
+  color: blue;
+  font-weight: bold;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.chat-card {
+  width: 400px;
+}
+
+.chat-content {
+  height: 400px;
+  overflow: auto
+}
+
+.chat-box {
+  width: 375px;
 }
