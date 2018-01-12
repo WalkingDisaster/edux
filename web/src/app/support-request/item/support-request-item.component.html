@@ -1,25 +1,25 @@
-<md-card *ngIf="supportRequest">
-  <md-card-header>
-    <div md-card-avatar>
-      <button (click)="unlock()" *ngIf="supportRequest.locked && myLock" class="material-icons md-36" md-icon-button><md-icon>edit</md-icon></button>
-      <button *ngIf="supportRequest.locked && !myLock" class="material-icons md-36" disabled md-icon-button><md-icon>lock_outline</md-icon></button>
-      <button (click)="lock()" *ngIf="!supportRequest.locked" class="material-icons md-36" md-icon-button><md-icon>lock_open</md-icon></button>
+<mat-card *ngIf="supportRequest">
+  <mat-card-header>
+    <div mat-card-avatar>
+      <button (click)="unlock()" *ngIf="supportRequest.locked && myLock" class="material-icons mat-36" mat-icon-button><mat-icon>edit</mat-icon></button>
+      <button *ngIf="supportRequest.locked && !myLock" class="material-icons mat-36" disabled mat-icon-button><mat-icon>lock_outline</mat-icon></button>
+      <button (click)="lock()" *ngIf="!supportRequest.locked" class="material-icons mat-36" mat-icon-button><mat-icon>lock_open</mat-icon></button>
     </div>
-    <md-card-title>{{ supportRequest.title.value }}</md-card-title>
-    <md-card-subtitle>
+    <mat-card-title>{{ supportRequest.title.value }}</mat-card-title>
+    <mat-card-subtitle>
       {{ supportRequest.currentStateString}}
-    </md-card-subtitle>
-    <md-card-subtitle *ngIf="supportRequest.locked; else showUnlocked">
+    </mat-card-subtitle>
+    <mat-card-subtitle *ngIf="supportRequest.locked; else showUnlocked">
       <span *ngIf="myLock; then showYourLock; else showLockUser"></span>
       <ng-template #showLockUser><b>locked</b> by {{ supportRequest.lockedBy }}</ng-template>
       <ng-template #showYourLock><b>You have this locked</b></ng-template>
-    </md-card-subtitle>
+    </mat-card-subtitle>
     <ng-template #showUnlocked>
-      <md-card-subtitle>Unlocked</md-card-subtitle>
+      <mat-card-subtitle>Unlocked</mat-card-subtitle>
     </ng-template>
-  </md-card-header>
+  </mat-card-header>
 
-  <md-card-content>
+  <mat-card-content>
     <p>Recorded on {{ supportRequest.recorded }} by {{ supportRequest.recordedBy }}</p>
 
     <div *ngIf="supportRequest.viewers.size > 0; else noViewers">
@@ -32,29 +32,29 @@
       <div>No one else is viewing this record.</div>
     </ng-template>
 
-    <md-input-container>
+    <mat-input-container>
       <input mdInput [disabled]="supportRequest.title.locked" [(ngModel)]="supportRequest.title.value" placeholder="title" />
-      <md-hint *ngIf="supportRequest.title.locked">{{supportRequest.title.lockedBy}}</md-hint>
-    </md-input-container>
-    <md-input-container>
+      <mat-hint *ngIf="supportRequest.title.locked">{{supportRequest.title.lockedBy}}</mat-hint>
+    </mat-input-container>
+    <mat-input-container>
       <input mdInput [disabled]="supportRequest.description.locked" [(ngModel)]="supportRequest.description.value" placeholder="description"
       />
-      <md-hint *ngIf="supportRequest.description.locked">{{supportRequest.description.lockedBy}}</md-hint>
-    </md-input-container>
-    <md-input-container>
+      <mat-hint *ngIf="supportRequest.description.locked">{{supportRequest.description.lockedBy}}</mat-hint>
+    </mat-input-container>
+    <mat-input-container>
       <input mdInput [disabled]="supportRequest.assignedTo.locked" [(ngModel)]="supportRequest.assignedTo.value" placeholder="assignee"
       />
-      <md-hint *ngIf="supportRequest.assignedTo.locked">{{supportRequest.assignedTo.lockedBy}}</md-hint>
-    </md-input-container>
+      <mat-hint *ngIf="supportRequest.assignedTo.locked">{{supportRequest.assignedTo.lockedBy}}</mat-hint>
+    </mat-input-container>
 
-  </md-card-content>
+  </mat-card-content>
 
-  <md-card-footer>
+  <mat-card-footer>
     <div *ngIf="supportRequest.isResolved">
       <div>
         Resolved on {{supportRequest.resolvedOn}} by {{supportRequest.resolvedBy}}
       </div>
     </div>
-  </md-card-footer>
+  </mat-card-footer>
 
-</md-card>
+</mat-card>

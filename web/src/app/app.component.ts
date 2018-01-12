@@ -13,7 +13,7 @@ import { EventAggregatorService } from './common/event-aggregator.service';
 export class AppComponent implements OnInit {
 
   public pendingNotifications = 0;
-  public title = 'Stir Trek 2017';
+  public title = 'CodeMash 2018';
   public userMessage: string;
   public loggedIn: boolean;
 

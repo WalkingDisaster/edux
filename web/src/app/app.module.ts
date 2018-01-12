@@ -2,9 +2,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { NotificationBarModule, NotificationBarService } from 'angular2-notification-bar';
 import { NgMaterialModule } from './ng-material/ng-material.module';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -53,9 +54,10 @@ import { SupportRequestItemComponent } from './support-request/item/support-requ
     BrowserModule,
     FormsModule,
     HttpModule,
-    BrowserAnimationsModule,
+    CommonModule,
+    BrowserAnimationsModule, // required animations module
+    ToastrModule.forRoot(), // ToastrModule added
     NoopAnimationsModule,
-    NotificationBarModule,
     NgMaterialModule
   ],
   providers: [
@@ -66,7 +68,6 @@ import { SupportRequestItemComponent } from './support-request/item/support-requ
     UserService,
     UtilityService,
     NotificationService,
-    NotificationBarService,
     SupportRequestService
   ],
   bootstrap: [AppComponent]

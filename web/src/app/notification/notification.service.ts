@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
-import { NotificationBarService, NotificationType } from 'angular2-notification-bar';
-
+import { ToastrService } from 'ngx-toastr';
 import { Notification } from '../models/notification';
 
 @Injectable()
@@ -13,7 +12,7 @@ export class NotificationService {
   public notificationCount: Subject<number>;
   public moreNotifications: Subject<Notification>;
 
-  constructor(private notificationBarService: NotificationBarService) {
+  constructor(private notificationBarService: ToastrService) {
     this.notificationCount = new Subject<number>();
     this.moreNotifications = new Subject<Notification>();
     this.notifications = new Array<Notification>();
@@ -21,7 +20,7 @@ export class NotificationService {
 
   public push(notification: Notification): void {
     this.notifications.push(notification);
-    this.notificationBarService.create({ message: notification.message, type: NotificationType.Info });
+    this.notificationBarService.info(notification.message);
     this.notificationCount.next(this.notifications.length);
     this.moreNotifications.next(notification);
   }

@@ -1,15 +1,15 @@
-<md-card class="login-card">
-  <md-card-header>
-  </md-card-header>
+<mat-card class="login-card">
+  <mat-card-header>
+  </mat-card-header>
 
-  <md-card-content>
-    <md-input-container>
+  <mat-card-content>
+    <mat-input-container>
       <input type="text" [(ngModel)]="userName" placeholder="User Name" mdInput required />
-    </md-input-container>
-  </md-card-content>
+    </mat-input-container>
+  </mat-card-content>
 
-  <md-card-actions>
-    <button type="submit" class="btn btn-success" [disabled]="!userName" (click)="onSubmit()" md-button>Login</button>
-  </md-card-actions>
+  <mat-card-actions>
+    <button type="submit" class="btn btn-success" [disabled]="!userName" (click)="onSubmit()" mat-button>Login</button>
+  </mat-card-actions>
 
-</md-card>
+</mat-card>
