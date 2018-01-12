@@ -31,7 +31,7 @@ export class SupportRequestListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.eventAggregator.userLogingOutEvent.forEach(userName => {
+    this.eventAggregator.userLogingOutEvent.subscribe(userName => {
       this.supportRequests = new Array<SupportRequestModel>();
     });
     this.supportRequests = new Array<SupportRequestModel>();

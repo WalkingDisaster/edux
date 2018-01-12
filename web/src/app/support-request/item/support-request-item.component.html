@@ -32,20 +32,20 @@
       <div>No one else is viewing this record.</div>
     </ng-template>
 
-    <mat-input-container>
-      <input mdInput [disabled]="supportRequest.title.locked" [(ngModel)]="supportRequest.title.value" placeholder="title" />
+    <mat-form-field>
+      <input matInput [disabled]="supportRequest.title.locked" [(ngModel)]="supportRequest.title.value" placeholder="title" />
       <mat-hint *ngIf="supportRequest.title.locked">{{supportRequest.title.lockedBy}}</mat-hint>
-    </mat-input-container>
-    <mat-input-container>
-      <input mdInput [disabled]="supportRequest.description.locked" [(ngModel)]="supportRequest.description.value" placeholder="description"
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput [disabled]="supportRequest.description.locked" [(ngModel)]="supportRequest.description.value" placeholder="description"
       />
       <mat-hint *ngIf="supportRequest.description.locked">{{supportRequest.description.lockedBy}}</mat-hint>
-    </mat-input-container>
-    <mat-input-container>
-      <input mdInput [disabled]="supportRequest.assignedTo.locked" [(ngModel)]="supportRequest.assignedTo.value" placeholder="assignee"
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput [disabled]="supportRequest.assignedTo.locked" [(ngModel)]="supportRequest.assignedTo.value" placeholder="assignee"
       />
       <mat-hint *ngIf="supportRequest.assignedTo.locked">{{supportRequest.assignedTo.lockedBy}}</mat-hint>
-    </mat-input-container>
+    </mat-form-field>
 
   </mat-card-content>
 

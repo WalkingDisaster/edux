@@ -24,7 +24,7 @@
 
   <mat-card-actions>
     <mat-input-container>
-      <input mdInput type="text" [(ngModel)]="message" placeholder="message" (keypress)="keyPressed($event.keyCode)" class="chat-box"
+      <input matInput type="text" [(ngModel)]="message" placeholder="message" (keypress)="keyPressed($event.keyCode)" class="chat-box"
       />
     </mat-input-container>
     <button (click)="sendMessage()" [disabled]="!message" mat-icon-button><mat-icon>send</mat-icon></button>
